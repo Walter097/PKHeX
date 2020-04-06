@@ -28,7 +28,7 @@ namespace PKHeX.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_Trainer));
+            this.components = new System.ComponentModel.Container();
             this.B_Cancel = new System.Windows.Forms.Button();
             this.B_Save = new System.Windows.Forms.Button();
             this.TB_OTName = new System.Windows.Forms.TextBox();
@@ -46,14 +46,6 @@ namespace PKHeX.WinForms
             this.CHK_Badge5 = new System.Windows.Forms.CheckBox();
             this.CHK_Badge7 = new System.Windows.Forms.CheckBox();
             this.CHK_Badge8 = new System.Windows.Forms.CheckBox();
-            this.PB_Badge8 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge6 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge4 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge2 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge7 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge5 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge3 = new System.Windows.Forms.PictureBox();
-            this.PB_Badge1 = new System.Windows.Forms.PictureBox();
             this.GB_Sayings = new System.Windows.Forms.GroupBox();
             this.L_Saying5 = new System.Windows.Forms.Label();
             this.L_Saying4 = new System.Windows.Forms.Label();
@@ -126,60 +118,16 @@ namespace PKHeX.WinForms
             this.L_TriplesC = new System.Windows.Forms.Label();
             this.L_DoublesC = new System.Windows.Forms.Label();
             this.L_SinglesC = new System.Windows.Forms.Label();
-            this.L_Outfit = new System.Windows.Forms.Label();
-            this.MT_1403F = new System.Windows.Forms.MaskedTextBox();
-            this.MT_1403E = new System.Windows.Forms.MaskedTextBox();
-            this.MT_1403D = new System.Windows.Forms.MaskedTextBox();
-            this.MT_1403C = new System.Windows.Forms.MaskedTextBox();
             this.B_GiveAccessories = new System.Windows.Forms.Button();
-            this.MT_1403B = new System.Windows.Forms.MaskedTextBox();
-            this.MT_1403A = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14039 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14038 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14037 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14036 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14035 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14034 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14033 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14032 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14031 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_14030 = new System.Windows.Forms.MaskedTextBox();
-            this.MT_Hat = new System.Windows.Forms.MaskedTextBox();
-            this.MT_HairColor = new System.Windows.Forms.MaskedTextBox();
-            this.L_Dress = new System.Windows.Forms.Label();
-            this.CB_Dress = new System.Windows.Forms.ComboBox();
-            this.CB_Bag = new System.Windows.Forms.ComboBox();
-            this.CB_Socks = new System.Windows.Forms.ComboBox();
-            this.CB_Pants = new System.Windows.Forms.ComboBox();
-            this.CB_Shirt = new System.Windows.Forms.ComboBox();
-            this.CB_Accessory = new System.Windows.Forms.ComboBox();
-            this.CB_Hat = new System.Windows.Forms.ComboBox();
-            this.L_Accessory = new System.Windows.Forms.Label();
-            this.L_Bag = new System.Windows.Forms.Label();
-            this.L_Socks = new System.Windows.Forms.Label();
-            this.L_Pants = new System.Windows.Forms.Label();
-            this.L_Shirt = new System.Windows.Forms.Label();
-            this.CB_FaceHair = new System.Windows.Forms.ComboBox();
-            this.CB_Hair = new System.Windows.Forms.ComboBox();
-            this.CB_Eye = new System.Windows.Forms.ComboBox();
-            this.CB_Skin = new System.Windows.Forms.ComboBox();
-            this.L_Hat = new System.Windows.Forms.Label();
-            this.L_FacialHair = new System.Windows.Forms.Label();
-            this.L_Hairstyle = new System.Windows.Forms.Label();
-            this.L_HairColor = new System.Windows.Forms.Label();
-            this.L_SkinColor = new System.Windows.Forms.Label();
             this.CB_Vivillon = new System.Windows.Forms.ComboBox();
             this.L_Vivillon = new System.Windows.Forms.Label();
             this.L_MultiplayerSprite = new System.Windows.Forms.Label();
             this.PB_Sprite = new System.Windows.Forms.PictureBox();
             this.CB_MultiplayerSprite = new System.Windows.Forms.ComboBox();
-            this.L_Offset = new System.Windows.Forms.Label();
-            this.CB_Stats = new System.Windows.Forms.ComboBox();
-            this.L_Value = new System.Windows.Forms.Label();
-            this.MT_Stat = new System.Windows.Forms.MaskedTextBox();
             this.TC_Editor = new System.Windows.Forms.TabControl();
             this.Tab_Overview = new System.Windows.Forms.TabPage();
             this.GB_Stats = new System.Windows.Forms.GroupBox();
+            this.TrainerStats = new PKHeX.WinForms.Subforms.Save_Editors.TrainerStat();
             this.GB_Adventure = new System.Windows.Forms.GroupBox();
             this.L_Fame = new System.Windows.Forms.Label();
             this.CAL_HoFDate = new System.Windows.Forms.DateTimePicker();
@@ -200,19 +148,15 @@ namespace PKHeX.WinForms
             this.L_X = new System.Windows.Forms.Label();
             this.CHK_Badge6 = new System.Windows.Forms.CheckBox();
             this.Tab_Multiplayer = new System.Windows.Forms.TabPage();
+            this.CHK_MegaRayquazaUnlocked = new System.Windows.Forms.CheckBox();
+            this.CHK_MegaUnlocked = new System.Windows.Forms.CheckBox();
             this.Tab_Maison = new System.Windows.Forms.TabPage();
             this.Tab_Appearance = new System.Windows.Forms.TabPage();
+            this.PG_CurrentAppearance = new System.Windows.Forms.PropertyGrid();
             this.L_TRNick = new System.Windows.Forms.Label();
             this.TB_TRNick = new System.Windows.Forms.TextBox();
-            this.CHK_MegaUnlocked = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge8)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge1)).BeginInit();
+            this.Tip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.Tip2 = new System.Windows.Forms.ToolTip(this.components);
             this.GB_Sayings.SuspendLayout();
             this.GB_MaisonBest.SuspendLayout();
             this.GB_MaisonCurrent.SuspendLayout();
@@ -336,166 +280,72 @@ namespace PKHeX.WinForms
             // CHK_Badge1
             // 
             this.CHK_Badge1.AutoSize = true;
-            this.CHK_Badge1.Location = new System.Drawing.Point(304, 10);
+            this.CHK_Badge1.Location = new System.Drawing.Point(169, 20);
             this.CHK_Badge1.Name = "CHK_Badge1";
             this.CHK_Badge1.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge1.TabIndex = 10;
             this.CHK_Badge1.Text = "1";
             this.CHK_Badge1.UseVisualStyleBackColor = true;
-            this.CHK_Badge1.Visible = false;
-            this.CHK_Badge1.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // CHK_Badge2
             // 
             this.CHK_Badge2.AutoSize = true;
-            this.CHK_Badge2.Location = new System.Drawing.Point(304, 33);
+            this.CHK_Badge2.Location = new System.Drawing.Point(169, 43);
             this.CHK_Badge2.Name = "CHK_Badge2";
             this.CHK_Badge2.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge2.TabIndex = 11;
             this.CHK_Badge2.Text = "2";
             this.CHK_Badge2.UseVisualStyleBackColor = true;
-            this.CHK_Badge2.Visible = false;
-            this.CHK_Badge2.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // CHK_Badge3
             // 
             this.CHK_Badge3.AutoSize = true;
-            this.CHK_Badge3.Location = new System.Drawing.Point(304, 56);
+            this.CHK_Badge3.Location = new System.Drawing.Point(169, 66);
             this.CHK_Badge3.Name = "CHK_Badge3";
             this.CHK_Badge3.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge3.TabIndex = 12;
             this.CHK_Badge3.Text = "3";
             this.CHK_Badge3.UseVisualStyleBackColor = true;
-            this.CHK_Badge3.Visible = false;
-            this.CHK_Badge3.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // CHK_Badge4
             // 
             this.CHK_Badge4.AutoSize = true;
-            this.CHK_Badge4.Location = new System.Drawing.Point(304, 79);
+            this.CHK_Badge4.Location = new System.Drawing.Point(169, 89);
             this.CHK_Badge4.Name = "CHK_Badge4";
             this.CHK_Badge4.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge4.TabIndex = 13;
             this.CHK_Badge4.Text = "4";
             this.CHK_Badge4.UseVisualStyleBackColor = true;
-            this.CHK_Badge4.Visible = false;
-            this.CHK_Badge4.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // CHK_Badge5
             // 
             this.CHK_Badge5.AutoSize = true;
-            this.CHK_Badge5.Location = new System.Drawing.Point(342, 10);
+            this.CHK_Badge5.Location = new System.Drawing.Point(207, 20);
             this.CHK_Badge5.Name = "CHK_Badge5";
             this.CHK_Badge5.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge5.TabIndex = 14;
             this.CHK_Badge5.Text = "5";
             this.CHK_Badge5.UseVisualStyleBackColor = true;
-            this.CHK_Badge5.Visible = false;
-            this.CHK_Badge5.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // CHK_Badge7
             // 
             this.CHK_Badge7.AutoSize = true;
-            this.CHK_Badge7.Location = new System.Drawing.Point(342, 56);
+            this.CHK_Badge7.Location = new System.Drawing.Point(207, 66);
             this.CHK_Badge7.Name = "CHK_Badge7";
             this.CHK_Badge7.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge7.TabIndex = 16;
             this.CHK_Badge7.Text = "7";
             this.CHK_Badge7.UseVisualStyleBackColor = true;
-            this.CHK_Badge7.Visible = false;
-            this.CHK_Badge7.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // CHK_Badge8
             // 
             this.CHK_Badge8.AutoSize = true;
-            this.CHK_Badge8.Location = new System.Drawing.Point(342, 79);
+            this.CHK_Badge8.Location = new System.Drawing.Point(207, 89);
             this.CHK_Badge8.Name = "CHK_Badge8";
             this.CHK_Badge8.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge8.TabIndex = 17;
             this.CHK_Badge8.Text = "8";
             this.CHK_Badge8.UseVisualStyleBackColor = true;
-            this.CHK_Badge8.Visible = false;
-            this.CHK_Badge8.CheckedChanged += new System.EventHandler(this.ChangeBadge);
-            // 
-            // PB_Badge8
-            // 
-            this.PB_Badge8.Location = new System.Drawing.Point(248, 63);
-            this.PB_Badge8.Name = "PB_Badge8";
-            this.PB_Badge8.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge8.TabIndex = 25;
-            this.PB_Badge8.TabStop = false;
-            this.PB_Badge8.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge6
-            // 
-            this.PB_Badge6.Location = new System.Drawing.Point(142, 63);
-            this.PB_Badge6.Name = "PB_Badge6";
-            this.PB_Badge6.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge6.TabIndex = 24;
-            this.PB_Badge6.TabStop = false;
-            this.PB_Badge6.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge4
-            // 
-            this.PB_Badge4.Location = new System.Drawing.Point(248, 10);
-            this.PB_Badge4.Name = "PB_Badge4";
-            this.PB_Badge4.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge4.TabIndex = 23;
-            this.PB_Badge4.TabStop = false;
-            this.PB_Badge4.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge2
-            // 
-            this.PB_Badge2.Location = new System.Drawing.Point(142, 10);
-            this.PB_Badge2.Name = "PB_Badge2";
-            this.PB_Badge2.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge2.TabIndex = 22;
-            this.PB_Badge2.TabStop = false;
-            this.PB_Badge2.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge7
-            // 
-            this.PB_Badge7.Location = new System.Drawing.Point(195, 63);
-            this.PB_Badge7.Name = "PB_Badge7";
-            this.PB_Badge7.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge7.TabIndex = 21;
-            this.PB_Badge7.TabStop = false;
-            this.PB_Badge7.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge5
-            // 
-            this.PB_Badge5.Location = new System.Drawing.Point(89, 63);
-            this.PB_Badge5.Name = "PB_Badge5";
-            this.PB_Badge5.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge5.TabIndex = 20;
-            this.PB_Badge5.TabStop = false;
-            this.PB_Badge5.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge3
-            // 
-            this.PB_Badge3.Location = new System.Drawing.Point(195, 10);
-            this.PB_Badge3.Name = "PB_Badge3";
-            this.PB_Badge3.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge3.TabIndex = 19;
-            this.PB_Badge3.TabStop = false;
-            this.PB_Badge3.Click += new System.EventHandler(this.ToggleBadge);
-            // 
-            // PB_Badge1
-            // 
-            this.PB_Badge1.Location = new System.Drawing.Point(89, 10);
-            this.PB_Badge1.Name = "PB_Badge1";
-            this.PB_Badge1.Size = new System.Drawing.Size(50, 50);
-            this.PB_Badge1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PB_Badge1.TabIndex = 18;
-            this.PB_Badge1.TabStop = false;
-            this.PB_Badge1.Click += new System.EventHandler(this.ToggleBadge);
             // 
             // GB_Sayings
             // 
@@ -1239,430 +1089,15 @@ namespace PKHeX.WinForms
             this.L_SinglesC.TabIndex = 39;
             this.L_SinglesC.Text = "Singles:";
             // 
-            // L_Outfit
-            // 
-            this.L_Outfit.AutoSize = true;
-            this.L_Outfit.Location = new System.Drawing.Point(295, 137);
-            this.L_Outfit.Name = "L_Outfit";
-            this.L_Outfit.Size = new System.Drawing.Size(55, 13);
-            this.L_Outfit.TabIndex = 72;
-            this.L_Outfit.Text = "Outfit Vals";
-            // 
-            // MT_1403F
-            // 
-            this.MT_1403F.Location = new System.Drawing.Point(281, 192);
-            this.MT_1403F.Mask = "000";
-            this.MT_1403F.Name = "MT_1403F";
-            this.MT_1403F.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_1403F.Size = new System.Drawing.Size(26, 20);
-            this.MT_1403F.TabIndex = 71;
-            this.MT_1403F.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_1403F.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_1403E
-            // 
-            this.MT_1403E.Location = new System.Drawing.Point(255, 192);
-            this.MT_1403E.Mask = "000";
-            this.MT_1403E.Name = "MT_1403E";
-            this.MT_1403E.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_1403E.Size = new System.Drawing.Size(26, 20);
-            this.MT_1403E.TabIndex = 70;
-            this.MT_1403E.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_1403E.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_1403D
-            // 
-            this.MT_1403D.Location = new System.Drawing.Point(229, 192);
-            this.MT_1403D.Mask = "000";
-            this.MT_1403D.Name = "MT_1403D";
-            this.MT_1403D.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_1403D.Size = new System.Drawing.Size(26, 20);
-            this.MT_1403D.TabIndex = 69;
-            this.MT_1403D.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_1403D.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_1403C
-            // 
-            this.MT_1403C.Location = new System.Drawing.Point(203, 192);
-            this.MT_1403C.Mask = "000";
-            this.MT_1403C.Name = "MT_1403C";
-            this.MT_1403C.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_1403C.Size = new System.Drawing.Size(26, 20);
-            this.MT_1403C.TabIndex = 68;
-            this.MT_1403C.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_1403C.TextChanged += new System.EventHandler(this.Change255);
-            // 
             // B_GiveAccessories
             // 
-            this.B_GiveAccessories.Location = new System.Drawing.Point(32, 189);
+            this.B_GiveAccessories.Location = new System.Drawing.Point(290, 121);
             this.B_GiveAccessories.Name = "B_GiveAccessories";
-            this.B_GiveAccessories.Size = new System.Drawing.Size(156, 23);
+            this.B_GiveAccessories.Size = new System.Drawing.Size(96, 59);
             this.B_GiveAccessories.TabIndex = 67;
             this.B_GiveAccessories.Text = "Give All Accessories";
             this.B_GiveAccessories.UseVisualStyleBackColor = true;
             this.B_GiveAccessories.Click += new System.EventHandler(this.GiveAllAccessories);
-            // 
-            // MT_1403B
-            // 
-            this.MT_1403B.Location = new System.Drawing.Point(333, 173);
-            this.MT_1403B.Mask = "000";
-            this.MT_1403B.Name = "MT_1403B";
-            this.MT_1403B.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_1403B.Size = new System.Drawing.Size(26, 20);
-            this.MT_1403B.TabIndex = 66;
-            this.MT_1403B.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_1403B.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_1403A
-            // 
-            this.MT_1403A.Location = new System.Drawing.Point(307, 173);
-            this.MT_1403A.Mask = "000";
-            this.MT_1403A.Name = "MT_1403A";
-            this.MT_1403A.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_1403A.Size = new System.Drawing.Size(26, 20);
-            this.MT_1403A.TabIndex = 65;
-            this.MT_1403A.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_1403A.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14039
-            // 
-            this.MT_14039.Location = new System.Drawing.Point(281, 173);
-            this.MT_14039.Mask = "000";
-            this.MT_14039.Name = "MT_14039";
-            this.MT_14039.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14039.Size = new System.Drawing.Size(26, 20);
-            this.MT_14039.TabIndex = 64;
-            this.MT_14039.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14039.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14038
-            // 
-            this.MT_14038.Location = new System.Drawing.Point(255, 173);
-            this.MT_14038.Mask = "000";
-            this.MT_14038.Name = "MT_14038";
-            this.MT_14038.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14038.Size = new System.Drawing.Size(26, 20);
-            this.MT_14038.TabIndex = 63;
-            this.MT_14038.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14038.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14037
-            // 
-            this.MT_14037.Location = new System.Drawing.Point(229, 173);
-            this.MT_14037.Mask = "000";
-            this.MT_14037.Name = "MT_14037";
-            this.MT_14037.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14037.Size = new System.Drawing.Size(26, 20);
-            this.MT_14037.TabIndex = 61;
-            this.MT_14037.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14037.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14036
-            // 
-            this.MT_14036.Location = new System.Drawing.Point(203, 173);
-            this.MT_14036.Mask = "000";
-            this.MT_14036.Name = "MT_14036";
-            this.MT_14036.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14036.Size = new System.Drawing.Size(26, 20);
-            this.MT_14036.TabIndex = 62;
-            this.MT_14036.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14036.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14035
-            // 
-            this.MT_14035.Location = new System.Drawing.Point(333, 154);
-            this.MT_14035.Mask = "000";
-            this.MT_14035.Name = "MT_14035";
-            this.MT_14035.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14035.Size = new System.Drawing.Size(26, 20);
-            this.MT_14035.TabIndex = 60;
-            this.MT_14035.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14035.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14034
-            // 
-            this.MT_14034.Location = new System.Drawing.Point(307, 154);
-            this.MT_14034.Mask = "000";
-            this.MT_14034.Name = "MT_14034";
-            this.MT_14034.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14034.Size = new System.Drawing.Size(26, 20);
-            this.MT_14034.TabIndex = 59;
-            this.MT_14034.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14034.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14033
-            // 
-            this.MT_14033.Location = new System.Drawing.Point(281, 154);
-            this.MT_14033.Mask = "000";
-            this.MT_14033.Name = "MT_14033";
-            this.MT_14033.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14033.Size = new System.Drawing.Size(26, 20);
-            this.MT_14033.TabIndex = 58;
-            this.MT_14033.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14033.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14032
-            // 
-            this.MT_14032.Location = new System.Drawing.Point(255, 154);
-            this.MT_14032.Mask = "000";
-            this.MT_14032.Name = "MT_14032";
-            this.MT_14032.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14032.Size = new System.Drawing.Size(26, 20);
-            this.MT_14032.TabIndex = 57;
-            this.MT_14032.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14032.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14031
-            // 
-            this.MT_14031.Enabled = false;
-            this.MT_14031.Location = new System.Drawing.Point(229, 154);
-            this.MT_14031.Mask = "000";
-            this.MT_14031.Name = "MT_14031";
-            this.MT_14031.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14031.Size = new System.Drawing.Size(26, 20);
-            this.MT_14031.TabIndex = 54;
-            this.MT_14031.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14031.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_14030
-            // 
-            this.MT_14030.Location = new System.Drawing.Point(203, 154);
-            this.MT_14030.Mask = "000";
-            this.MT_14030.Name = "MT_14030";
-            this.MT_14030.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MT_14030.Size = new System.Drawing.Size(26, 20);
-            this.MT_14030.TabIndex = 56;
-            this.MT_14030.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_14030.TextChanged += new System.EventHandler(this.Change255);
-            // 
-            // MT_Hat
-            // 
-            this.MT_Hat.Location = new System.Drawing.Point(100, 40);
-            this.MT_Hat.Mask = "00";
-            this.MT_Hat.Name = "MT_Hat";
-            this.MT_Hat.Size = new System.Drawing.Size(22, 20);
-            this.MT_Hat.TabIndex = 55;
-            this.MT_Hat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_Hat.TextChanged += new System.EventHandler(this.ChangeSpecial);
-            // 
-            // MT_HairColor
-            // 
-            this.MT_HairColor.Location = new System.Drawing.Point(271, 61);
-            this.MT_HairColor.Mask = "00";
-            this.MT_HairColor.Name = "MT_HairColor";
-            this.MT_HairColor.Size = new System.Drawing.Size(22, 20);
-            this.MT_HairColor.TabIndex = 55;
-            this.MT_HairColor.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.MT_HairColor.TextChanged += new System.EventHandler(this.ChangeSpecial);
-            // 
-            // L_Dress
-            // 
-            this.L_Dress.Location = new System.Drawing.Point(28, 126);
-            this.L_Dress.Name = "L_Dress";
-            this.L_Dress.Size = new System.Drawing.Size(65, 13);
-            this.L_Dress.TabIndex = 21;
-            this.L_Dress.Text = "Dress:";
-            this.L_Dress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // CB_Dress
-            // 
-            this.CB_Dress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Dress.FormattingEnabled = true;
-            this.CB_Dress.Location = new System.Drawing.Point(100, 124);
-            this.CB_Dress.Name = "CB_Dress";
-            this.CB_Dress.Size = new System.Drawing.Size(88, 21);
-            this.CB_Dress.TabIndex = 20;
-            this.CB_Dress.Visible = false;
-            // 
-            // CB_Bag
-            // 
-            this.CB_Bag.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Bag.FormattingEnabled = true;
-            this.CB_Bag.Location = new System.Drawing.Point(100, 166);
-            this.CB_Bag.Name = "CB_Bag";
-            this.CB_Bag.Size = new System.Drawing.Size(88, 21);
-            this.CB_Bag.TabIndex = 19;
-            this.CB_Bag.Visible = false;
-            // 
-            // CB_Socks
-            // 
-            this.CB_Socks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Socks.FormattingEnabled = true;
-            this.CB_Socks.Location = new System.Drawing.Point(100, 145);
-            this.CB_Socks.Name = "CB_Socks";
-            this.CB_Socks.Size = new System.Drawing.Size(88, 21);
-            this.CB_Socks.TabIndex = 18;
-            this.CB_Socks.Visible = false;
-            // 
-            // CB_Pants
-            // 
-            this.CB_Pants.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Pants.FormattingEnabled = true;
-            this.CB_Pants.Location = new System.Drawing.Point(100, 103);
-            this.CB_Pants.Name = "CB_Pants";
-            this.CB_Pants.Size = new System.Drawing.Size(88, 21);
-            this.CB_Pants.TabIndex = 17;
-            this.CB_Pants.Visible = false;
-            // 
-            // CB_Shirt
-            // 
-            this.CB_Shirt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Shirt.FormattingEnabled = true;
-            this.CB_Shirt.Location = new System.Drawing.Point(100, 82);
-            this.CB_Shirt.Name = "CB_Shirt";
-            this.CB_Shirt.Size = new System.Drawing.Size(88, 21);
-            this.CB_Shirt.TabIndex = 16;
-            this.CB_Shirt.Visible = false;
-            // 
-            // CB_Accessory
-            // 
-            this.CB_Accessory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Accessory.FormattingEnabled = true;
-            this.CB_Accessory.Location = new System.Drawing.Point(100, 61);
-            this.CB_Accessory.Name = "CB_Accessory";
-            this.CB_Accessory.Size = new System.Drawing.Size(88, 21);
-            this.CB_Accessory.TabIndex = 15;
-            this.CB_Accessory.Visible = false;
-            // 
-            // CB_Hat
-            // 
-            this.CB_Hat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Hat.FormattingEnabled = true;
-            this.CB_Hat.Location = new System.Drawing.Point(100, 40);
-            this.CB_Hat.Name = "CB_Hat";
-            this.CB_Hat.Size = new System.Drawing.Size(88, 21);
-            this.CB_Hat.TabIndex = 14;
-            this.CB_Hat.Visible = false;
-            // 
-            // L_Accessory
-            // 
-            this.L_Accessory.Location = new System.Drawing.Point(28, 63);
-            this.L_Accessory.Name = "L_Accessory";
-            this.L_Accessory.Size = new System.Drawing.Size(65, 13);
-            this.L_Accessory.TabIndex = 13;
-            this.L_Accessory.Text = "Accessory:";
-            this.L_Accessory.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_Bag
-            // 
-            this.L_Bag.Location = new System.Drawing.Point(28, 167);
-            this.L_Bag.Name = "L_Bag";
-            this.L_Bag.Size = new System.Drawing.Size(65, 13);
-            this.L_Bag.TabIndex = 12;
-            this.L_Bag.Text = "Bag:";
-            this.L_Bag.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_Socks
-            // 
-            this.L_Socks.Location = new System.Drawing.Point(28, 146);
-            this.L_Socks.Name = "L_Socks";
-            this.L_Socks.Size = new System.Drawing.Size(65, 13);
-            this.L_Socks.TabIndex = 11;
-            this.L_Socks.Text = "Socks:";
-            this.L_Socks.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_Pants
-            // 
-            this.L_Pants.Location = new System.Drawing.Point(28, 105);
-            this.L_Pants.Name = "L_Pants";
-            this.L_Pants.Size = new System.Drawing.Size(65, 13);
-            this.L_Pants.TabIndex = 10;
-            this.L_Pants.Text = "Pants:";
-            this.L_Pants.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_Shirt
-            // 
-            this.L_Shirt.Location = new System.Drawing.Point(28, 84);
-            this.L_Shirt.Name = "L_Shirt";
-            this.L_Shirt.Size = new System.Drawing.Size(65, 13);
-            this.L_Shirt.TabIndex = 9;
-            this.L_Shirt.Text = "Shirt:";
-            this.L_Shirt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // CB_FaceHair
-            // 
-            this.CB_FaceHair.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_FaceHair.FormattingEnabled = true;
-            this.CB_FaceHair.Location = new System.Drawing.Point(271, 103);
-            this.CB_FaceHair.Name = "CB_FaceHair";
-            this.CB_FaceHair.Size = new System.Drawing.Size(88, 21);
-            this.CB_FaceHair.TabIndex = 8;
-            this.CB_FaceHair.Visible = false;
-            // 
-            // CB_Hair
-            // 
-            this.CB_Hair.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Hair.FormattingEnabled = true;
-            this.CB_Hair.Location = new System.Drawing.Point(271, 82);
-            this.CB_Hair.Name = "CB_Hair";
-            this.CB_Hair.Size = new System.Drawing.Size(88, 21);
-            this.CB_Hair.TabIndex = 7;
-            this.CB_Hair.Visible = false;
-            // 
-            // CB_Eye
-            // 
-            this.CB_Eye.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Eye.FormattingEnabled = true;
-            this.CB_Eye.Location = new System.Drawing.Point(271, 61);
-            this.CB_Eye.Name = "CB_Eye";
-            this.CB_Eye.Size = new System.Drawing.Size(88, 21);
-            this.CB_Eye.TabIndex = 6;
-            this.CB_Eye.Visible = false;
-            // 
-            // CB_Skin
-            // 
-            this.CB_Skin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Skin.FormattingEnabled = true;
-            this.CB_Skin.Location = new System.Drawing.Point(271, 40);
-            this.CB_Skin.Name = "CB_Skin";
-            this.CB_Skin.Size = new System.Drawing.Size(88, 21);
-            this.CB_Skin.TabIndex = 5;
-            this.CB_Skin.Visible = false;
-            // 
-            // L_Hat
-            // 
-            this.L_Hat.Location = new System.Drawing.Point(28, 42);
-            this.L_Hat.Name = "L_Hat";
-            this.L_Hat.Size = new System.Drawing.Size(65, 13);
-            this.L_Hat.TabIndex = 4;
-            this.L_Hat.Text = "Hat:";
-            this.L_Hat.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_FacialHair
-            // 
-            this.L_FacialHair.Location = new System.Drawing.Point(199, 104);
-            this.L_FacialHair.Name = "L_FacialHair";
-            this.L_FacialHair.Size = new System.Drawing.Size(65, 13);
-            this.L_FacialHair.TabIndex = 3;
-            this.L_FacialHair.Text = "Facial Hair:";
-            this.L_FacialHair.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_Hairstyle
-            // 
-            this.L_Hairstyle.Location = new System.Drawing.Point(199, 83);
-            this.L_Hairstyle.Name = "L_Hairstyle";
-            this.L_Hairstyle.Size = new System.Drawing.Size(65, 13);
-            this.L_Hairstyle.TabIndex = 2;
-            this.L_Hairstyle.Text = "Hairstyle:";
-            this.L_Hairstyle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_HairColor
-            // 
-            this.L_HairColor.Location = new System.Drawing.Point(199, 63);
-            this.L_HairColor.Name = "L_HairColor";
-            this.L_HairColor.Size = new System.Drawing.Size(65, 13);
-            this.L_HairColor.TabIndex = 1;
-            this.L_HairColor.Text = "Hair Color:";
-            this.L_HairColor.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // L_SkinColor
-            // 
-            this.L_SkinColor.Location = new System.Drawing.Point(199, 44);
-            this.L_SkinColor.Name = "L_SkinColor";
-            this.L_SkinColor.Size = new System.Drawing.Size(65, 13);
-            this.L_SkinColor.TabIndex = 0;
-            this.L_SkinColor.Text = "Skin Color:";
-            this.L_SkinColor.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // CB_Vivillon
             // 
@@ -1714,51 +1149,11 @@ namespace PKHeX.WinForms
             this.CB_MultiplayerSprite.TabIndex = 25;
             this.CB_MultiplayerSprite.SelectedIndexChanged += new System.EventHandler(this.CB_Multi_SelectedIndexChanged);
             // 
-            // L_Offset
-            // 
-            this.L_Offset.AutoSize = true;
-            this.L_Offset.Location = new System.Drawing.Point(22, 126);
-            this.L_Offset.Name = "L_Offset";
-            this.L_Offset.Size = new System.Drawing.Size(39, 13);
-            this.L_Offset.TabIndex = 28;
-            this.L_Offset.Text = "(offset)";
-            // 
-            // CB_Stats
-            // 
-            this.CB_Stats.DropDownHeight = 156;
-            this.CB_Stats.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_Stats.DropDownWidth = 180;
-            this.CB_Stats.FormattingEnabled = true;
-            this.CB_Stats.IntegralHeight = false;
-            this.CB_Stats.Location = new System.Drawing.Point(25, 86);
-            this.CB_Stats.Name = "CB_Stats";
-            this.CB_Stats.Size = new System.Drawing.Size(121, 21);
-            this.CB_Stats.TabIndex = 23;
-            this.CB_Stats.SelectedIndexChanged += new System.EventHandler(this.ChangeStat);
-            // 
-            // L_Value
-            // 
-            this.L_Value.AutoSize = true;
-            this.L_Value.Location = new System.Drawing.Point(22, 110);
-            this.L_Value.Name = "L_Value";
-            this.L_Value.Size = new System.Drawing.Size(34, 13);
-            this.L_Value.TabIndex = 22;
-            this.L_Value.Text = "Value";
-            // 
-            // MT_Stat
-            // 
-            this.MT_Stat.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MT_Stat.Location = new System.Drawing.Point(69, 107);
-            this.MT_Stat.Mask = "0000000000";
-            this.MT_Stat.Name = "MT_Stat";
-            this.MT_Stat.Size = new System.Drawing.Size(77, 20);
-            this.MT_Stat.TabIndex = 21;
-            this.MT_Stat.Text = "1231231234";
-            this.MT_Stat.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.MT_Stat.TextChanged += new System.EventHandler(this.ChangeStatVal);
-            // 
             // TC_Editor
             // 
+            this.TC_Editor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TC_Editor.Controls.Add(this.Tab_Overview);
             this.TC_Editor.Controls.Add(this.Tab_BadgeMap);
             this.TC_Editor.Controls.Add(this.Tab_Multiplayer);
@@ -1805,22 +1200,26 @@ namespace PKHeX.WinForms
             // 
             // GB_Stats
             // 
+            this.GB_Stats.Controls.Add(this.TrainerStats);
             this.GB_Stats.Controls.Add(this.TB_BP);
             this.GB_Stats.Controls.Add(this.TB_PM);
             this.GB_Stats.Controls.Add(this.L_PM);
             this.GB_Stats.Controls.Add(this.TB_Style);
-            this.GB_Stats.Controls.Add(this.L_Offset);
             this.GB_Stats.Controls.Add(this.L_BP);
-            this.GB_Stats.Controls.Add(this.L_Value);
             this.GB_Stats.Controls.Add(this.L_Style);
-            this.GB_Stats.Controls.Add(this.MT_Stat);
-            this.GB_Stats.Controls.Add(this.CB_Stats);
             this.GB_Stats.Location = new System.Drawing.Point(209, 99);
             this.GB_Stats.Name = "GB_Stats";
             this.GB_Stats.Size = new System.Drawing.Size(171, 151);
             this.GB_Stats.TabIndex = 55;
             this.GB_Stats.TabStop = false;
             this.GB_Stats.Text = "Stats";
+            // 
+            // TrainerStats
+            // 
+            this.TrainerStats.Location = new System.Drawing.Point(23, 81);
+            this.TrainerStats.Name = "TrainerStats";
+            this.TrainerStats.Size = new System.Drawing.Size(146, 72);
+            this.TrainerStats.TabIndex = 9;
             // 
             // GB_Adventure
             // 
@@ -1868,7 +1267,7 @@ namespace PKHeX.WinForms
             // 
             // CAL_HoFTime
             // 
-            this.CAL_HoFTime.CustomFormat = "hh:mm tt";
+            this.CAL_HoFTime.CustomFormat = "HH:mm:ss";
             this.CAL_HoFTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.CAL_HoFTime.Location = new System.Drawing.Point(115, 91);
             this.CAL_HoFTime.MaxDate = new System.DateTime(2050, 12, 31, 0, 0, 0, 0);
@@ -1901,7 +1300,7 @@ namespace PKHeX.WinForms
             // 
             // CAL_AdventureStartTime
             // 
-            this.CAL_AdventureStartTime.CustomFormat = "hh:mm tt";
+            this.CAL_AdventureStartTime.CustomFormat = "HH:mm:ss";
             this.CAL_AdventureStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.CAL_AdventureStartTime.Location = new System.Drawing.Point(115, 54);
             this.CAL_AdventureStartTime.MaxDate = new System.DateTime(2050, 12, 31, 0, 0, 0, 0);
@@ -1914,7 +1313,7 @@ namespace PKHeX.WinForms
             // 
             // CAL_LastSavedTime
             // 
-            this.CAL_LastSavedTime.CustomFormat = "hh:mm tt";
+            this.CAL_LastSavedTime.CustomFormat = "HH:mm:ss";
             this.CAL_LastSavedTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.CAL_LastSavedTime.Location = new System.Drawing.Point(115, 129);
             this.CAL_LastSavedTime.MaxDate = new System.DateTime(4095, 12, 31, 0, 0, 0, 0);
@@ -1929,20 +1328,12 @@ namespace PKHeX.WinForms
             this.Tab_BadgeMap.Controls.Add(this.GB_Map);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge7);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge5);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge8);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge4);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge1);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge8);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge3);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge3);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge6);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge1);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge6);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge5);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge4);
             this.Tab_BadgeMap.Controls.Add(this.CHK_Badge2);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge7);
-            this.Tab_BadgeMap.Controls.Add(this.PB_Badge2);
             this.Tab_BadgeMap.Location = new System.Drawing.Point(4, 22);
             this.Tab_BadgeMap.Name = "Tab_BadgeMap";
             this.Tab_BadgeMap.Size = new System.Drawing.Size(386, 253);
@@ -1983,6 +1374,7 @@ namespace PKHeX.WinForms
             this.NUD_Z.Name = "NUD_Z";
             this.NUD_Z.Size = new System.Drawing.Size(50, 20);
             this.NUD_Z.TabIndex = 53;
+            this.NUD_Z.ValueChanged += new System.EventHandler(this.ChangeMapValue);
             // 
             // NUD_M
             // 
@@ -1995,6 +1387,7 @@ namespace PKHeX.WinForms
             this.NUD_M.Name = "NUD_M";
             this.NUD_M.Size = new System.Drawing.Size(50, 20);
             this.NUD_M.TabIndex = 52;
+            this.NUD_M.ValueChanged += new System.EventHandler(this.ChangeMapValue);
             // 
             // NUD_Y
             // 
@@ -2008,6 +1401,7 @@ namespace PKHeX.WinForms
             this.NUD_Y.Name = "NUD_Y";
             this.NUD_Y.Size = new System.Drawing.Size(50, 20);
             this.NUD_Y.TabIndex = 51;
+            this.NUD_Y.ValueChanged += new System.EventHandler(this.ChangeMapValue);
             // 
             // NUD_X
             // 
@@ -2021,6 +1415,7 @@ namespace PKHeX.WinForms
             this.NUD_X.Name = "NUD_X";
             this.NUD_X.Size = new System.Drawing.Size(50, 20);
             this.NUD_X.TabIndex = 50;
+            this.NUD_X.ValueChanged += new System.EventHandler(this.ChangeMapValue);
             // 
             // L_Y
             // 
@@ -2061,17 +1456,16 @@ namespace PKHeX.WinForms
             // CHK_Badge6
             // 
             this.CHK_Badge6.AutoSize = true;
-            this.CHK_Badge6.Location = new System.Drawing.Point(342, 33);
+            this.CHK_Badge6.Location = new System.Drawing.Point(207, 43);
             this.CHK_Badge6.Name = "CHK_Badge6";
             this.CHK_Badge6.Size = new System.Drawing.Size(32, 17);
             this.CHK_Badge6.TabIndex = 15;
             this.CHK_Badge6.Text = "6";
             this.CHK_Badge6.UseVisualStyleBackColor = true;
-            this.CHK_Badge6.Visible = false;
-            this.CHK_Badge6.CheckedChanged += new System.EventHandler(this.ChangeBadge);
             // 
             // Tab_Multiplayer
             // 
+            this.Tab_Multiplayer.Controls.Add(this.CHK_MegaRayquazaUnlocked);
             this.Tab_Multiplayer.Controls.Add(this.CHK_MegaUnlocked);
             this.Tab_Multiplayer.Controls.Add(this.L_MultiplayerSprite);
             this.Tab_Multiplayer.Controls.Add(this.GB_Sayings);
@@ -2084,6 +1478,26 @@ namespace PKHeX.WinForms
             this.Tab_Multiplayer.TabIndex = 1;
             this.Tab_Multiplayer.Text = "Multiplayer";
             this.Tab_Multiplayer.UseVisualStyleBackColor = true;
+            // 
+            // CHK_MegaRayquazaUnlocked
+            // 
+            this.CHK_MegaRayquazaUnlocked.AutoSize = true;
+            this.CHK_MegaRayquazaUnlocked.Location = new System.Drawing.Point(123, 230);
+            this.CHK_MegaRayquazaUnlocked.Name = "CHK_MegaRayquazaUnlocked";
+            this.CHK_MegaRayquazaUnlocked.Size = new System.Drawing.Size(153, 17);
+            this.CHK_MegaRayquazaUnlocked.TabIndex = 77;
+            this.CHK_MegaRayquazaUnlocked.Text = "Mega Rayquaza Unlocked";
+            this.CHK_MegaRayquazaUnlocked.UseVisualStyleBackColor = true;
+            // 
+            // CHK_MegaUnlocked
+            // 
+            this.CHK_MegaUnlocked.AutoSize = true;
+            this.CHK_MegaUnlocked.Location = new System.Drawing.Point(123, 214);
+            this.CHK_MegaUnlocked.Name = "CHK_MegaUnlocked";
+            this.CHK_MegaUnlocked.Size = new System.Drawing.Size(149, 17);
+            this.CHK_MegaUnlocked.TabIndex = 76;
+            this.CHK_MegaUnlocked.Text = "Mega Evolution Unlocked";
+            this.CHK_MegaUnlocked.UseVisualStyleBackColor = true;
             // 
             // Tab_Maison
             // 
@@ -2098,50 +1512,10 @@ namespace PKHeX.WinForms
             // 
             // Tab_Appearance
             // 
+            this.Tab_Appearance.Controls.Add(this.PG_CurrentAppearance);
             this.Tab_Appearance.Controls.Add(this.L_TRNick);
             this.Tab_Appearance.Controls.Add(this.TB_TRNick);
-            this.Tab_Appearance.Controls.Add(this.CB_Skin);
-            this.Tab_Appearance.Controls.Add(this.CB_Hair);
-            this.Tab_Appearance.Controls.Add(this.MT_Hat);
-            this.Tab_Appearance.Controls.Add(this.CB_FaceHair);
-            this.Tab_Appearance.Controls.Add(this.L_Outfit);
-            this.Tab_Appearance.Controls.Add(this.MT_HairColor);
-            this.Tab_Appearance.Controls.Add(this.MT_1403F);
-            this.Tab_Appearance.Controls.Add(this.CB_Eye);
             this.Tab_Appearance.Controls.Add(this.B_GiveAccessories);
-            this.Tab_Appearance.Controls.Add(this.L_FacialHair);
-            this.Tab_Appearance.Controls.Add(this.CB_Shirt);
-            this.Tab_Appearance.Controls.Add(this.L_SkinColor);
-            this.Tab_Appearance.Controls.Add(this.L_Dress);
-            this.Tab_Appearance.Controls.Add(this.L_Hairstyle);
-            this.Tab_Appearance.Controls.Add(this.MT_1403E);
-            this.Tab_Appearance.Controls.Add(this.L_HairColor);
-            this.Tab_Appearance.Controls.Add(this.CB_Accessory);
-            this.Tab_Appearance.Controls.Add(this.CB_Dress);
-            this.Tab_Appearance.Controls.Add(this.MT_14030);
-            this.Tab_Appearance.Controls.Add(this.CB_Hat);
-            this.Tab_Appearance.Controls.Add(this.CB_Bag);
-            this.Tab_Appearance.Controls.Add(this.MT_1403D);
-            this.Tab_Appearance.Controls.Add(this.L_Accessory);
-            this.Tab_Appearance.Controls.Add(this.CB_Socks);
-            this.Tab_Appearance.Controls.Add(this.L_Hat);
-            this.Tab_Appearance.Controls.Add(this.MT_14031);
-            this.Tab_Appearance.Controls.Add(this.L_Shirt);
-            this.Tab_Appearance.Controls.Add(this.CB_Pants);
-            this.Tab_Appearance.Controls.Add(this.MT_1403C);
-            this.Tab_Appearance.Controls.Add(this.MT_14032);
-            this.Tab_Appearance.Controls.Add(this.MT_1403B);
-            this.Tab_Appearance.Controls.Add(this.MT_14033);
-            this.Tab_Appearance.Controls.Add(this.MT_1403A);
-            this.Tab_Appearance.Controls.Add(this.L_Bag);
-            this.Tab_Appearance.Controls.Add(this.MT_14034);
-            this.Tab_Appearance.Controls.Add(this.L_Socks);
-            this.Tab_Appearance.Controls.Add(this.MT_14039);
-            this.Tab_Appearance.Controls.Add(this.L_Pants);
-            this.Tab_Appearance.Controls.Add(this.MT_14035);
-            this.Tab_Appearance.Controls.Add(this.MT_14038);
-            this.Tab_Appearance.Controls.Add(this.MT_14036);
-            this.Tab_Appearance.Controls.Add(this.MT_14037);
             this.Tab_Appearance.Location = new System.Drawing.Point(4, 22);
             this.Tab_Appearance.Name = "Tab_Appearance";
             this.Tab_Appearance.Size = new System.Drawing.Size(386, 253);
@@ -2149,35 +1523,37 @@ namespace PKHeX.WinForms
             this.Tab_Appearance.Text = "Appearance";
             this.Tab_Appearance.UseVisualStyleBackColor = true;
             // 
+            // PG_CurrentAppearance
+            // 
+            this.PG_CurrentAppearance.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PG_CurrentAppearance.HelpVisible = false;
+            this.PG_CurrentAppearance.Location = new System.Drawing.Point(3, 3);
+            this.PG_CurrentAppearance.Name = "PG_CurrentAppearance";
+            this.PG_CurrentAppearance.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
+            this.PG_CurrentAppearance.Size = new System.Drawing.Size(281, 247);
+            this.PG_CurrentAppearance.TabIndex = 75;
+            this.PG_CurrentAppearance.ToolbarVisible = false;
+            // 
             // L_TRNick
             // 
-            this.L_TRNick.Location = new System.Drawing.Point(68, 230);
+            this.L_TRNick.Location = new System.Drawing.Point(255, 51);
             this.L_TRNick.Name = "L_TRNick";
-            this.L_TRNick.Size = new System.Drawing.Size(128, 20);
+            this.L_TRNick.Size = new System.Drawing.Size(128, 41);
             this.L_TRNick.TabIndex = 74;
             this.L_TRNick.Text = "Trainer Nickname:";
-            this.L_TRNick.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.L_TRNick.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // TB_TRNick
             // 
             this.TB_TRNick.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TB_TRNick.Location = new System.Drawing.Point(202, 230);
+            this.TB_TRNick.Location = new System.Drawing.Point(290, 95);
             this.TB_TRNick.MaxLength = 12;
             this.TB_TRNick.Name = "TB_TRNick";
             this.TB_TRNick.Size = new System.Drawing.Size(93, 20);
             this.TB_TRNick.TabIndex = 73;
             this.TB_TRNick.Text = "WWWWWWWWWWWW";
             this.TB_TRNick.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // CHK_MegaUnlocked
-            // 
-            this.CHK_MegaUnlocked.AutoSize = true;
-            this.CHK_MegaUnlocked.Location = new System.Drawing.Point(123, 216);
-            this.CHK_MegaUnlocked.Name = "CHK_MegaUnlocked";
-            this.CHK_MegaUnlocked.Size = new System.Drawing.Size(149, 17);
-            this.CHK_MegaUnlocked.TabIndex = 76;
-            this.CHK_MegaUnlocked.Text = "Mega Evolution Unlocked";
-            this.CHK_MegaUnlocked.UseVisualStyleBackColor = true;
             // 
             // SAV_Trainer
             // 
@@ -2188,20 +1564,12 @@ namespace PKHeX.WinForms
             this.Controls.Add(this.B_Save);
             this.Controls.Add(this.B_Cancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::PKHeX.WinForms.Properties.Resources.Icon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SAV_Trainer";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Trainer Data Editor";
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge8)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PB_Badge1)).EndInit();
             this.GB_Sayings.ResumeLayout(false);
             this.GB_Sayings.PerformLayout();
             this.GB_MaisonBest.ResumeLayout(false);
@@ -2251,14 +1619,6 @@ namespace PKHeX.WinForms
         private System.Windows.Forms.CheckBox CHK_Badge5;
         private System.Windows.Forms.CheckBox CHK_Badge7;
         private System.Windows.Forms.CheckBox CHK_Badge8;
-        private System.Windows.Forms.PictureBox PB_Badge1;
-        private System.Windows.Forms.PictureBox PB_Badge3;
-        private System.Windows.Forms.PictureBox PB_Badge5;
-        private System.Windows.Forms.PictureBox PB_Badge7;
-        private System.Windows.Forms.PictureBox PB_Badge2;
-        private System.Windows.Forms.PictureBox PB_Badge4;
-        private System.Windows.Forms.PictureBox PB_Badge6;
-        private System.Windows.Forms.PictureBox PB_Badge8;
         private System.Windows.Forms.GroupBox GB_Sayings;
         private System.Windows.Forms.Label L_Saying5;
         private System.Windows.Forms.Label L_Saying4;
@@ -2323,61 +1683,16 @@ namespace PKHeX.WinForms
         private System.Windows.Forms.MaskedTextBox TB_MCDN;
         private System.Windows.Forms.MaskedTextBox TB_MCSS;
         private System.Windows.Forms.MaskedTextBox TB_MCSN;
-        private System.Windows.Forms.Label L_Dress;
-        private System.Windows.Forms.ComboBox CB_Dress;
-        private System.Windows.Forms.ComboBox CB_Bag;
-        private System.Windows.Forms.ComboBox CB_Socks;
-        private System.Windows.Forms.ComboBox CB_Pants;
-        private System.Windows.Forms.ComboBox CB_Shirt;
-        private System.Windows.Forms.ComboBox CB_Accessory;
-        private System.Windows.Forms.ComboBox CB_Hat;
-        private System.Windows.Forms.Label L_Accessory;
-        private System.Windows.Forms.Label L_Bag;
-        private System.Windows.Forms.Label L_Socks;
-        private System.Windows.Forms.Label L_Pants;
-        private System.Windows.Forms.Label L_Shirt;
-        private System.Windows.Forms.ComboBox CB_FaceHair;
-        private System.Windows.Forms.ComboBox CB_Hair;
-        private System.Windows.Forms.ComboBox CB_Eye;
-        private System.Windows.Forms.ComboBox CB_Skin;
-        private System.Windows.Forms.Label L_Hat;
-        private System.Windows.Forms.Label L_FacialHair;
-        private System.Windows.Forms.Label L_Hairstyle;
-        private System.Windows.Forms.Label L_HairColor;
-        private System.Windows.Forms.Label L_SkinColor;
         private System.Windows.Forms.Label L_MultiplayerSprite;
         private System.Windows.Forms.PictureBox PB_Sprite;
         private System.Windows.Forms.ComboBox CB_MultiplayerSprite;
-        private System.Windows.Forms.ComboBox CB_Stats;
-        private System.Windows.Forms.Label L_Value;
-        private System.Windows.Forms.MaskedTextBox MT_Stat;
-        private System.Windows.Forms.Label L_Offset;
         private System.Windows.Forms.Label L_Seconds;
         private System.Windows.Forms.Label L_Minutes;
         private System.Windows.Forms.MaskedTextBox MT_Seconds;
         private System.Windows.Forms.MaskedTextBox MT_Minutes;
         private System.Windows.Forms.Label L_Hours;
         private System.Windows.Forms.MaskedTextBox MT_Hours;
-        private System.Windows.Forms.MaskedTextBox MT_Hat;
-        private System.Windows.Forms.MaskedTextBox MT_HairColor;
-        private System.Windows.Forms.MaskedTextBox MT_1403B;
-        private System.Windows.Forms.MaskedTextBox MT_1403A;
-        private System.Windows.Forms.MaskedTextBox MT_14039;
-        private System.Windows.Forms.MaskedTextBox MT_14038;
-        private System.Windows.Forms.MaskedTextBox MT_14037;
-        private System.Windows.Forms.MaskedTextBox MT_14036;
-        private System.Windows.Forms.MaskedTextBox MT_14035;
-        private System.Windows.Forms.MaskedTextBox MT_14034;
-        private System.Windows.Forms.MaskedTextBox MT_14033;
-        private System.Windows.Forms.MaskedTextBox MT_14032;
-        private System.Windows.Forms.MaskedTextBox MT_14031;
-        private System.Windows.Forms.MaskedTextBox MT_14030;
         private System.Windows.Forms.Button B_GiveAccessories;
-        private System.Windows.Forms.MaskedTextBox MT_1403F;
-        private System.Windows.Forms.MaskedTextBox MT_1403E;
-        private System.Windows.Forms.MaskedTextBox MT_1403D;
-        private System.Windows.Forms.MaskedTextBox MT_1403C;
-        private System.Windows.Forms.Label L_Outfit;
         private System.Windows.Forms.ComboBox CB_Vivillon;
         private System.Windows.Forms.Label L_Vivillon;
         private System.Windows.Forms.Label L_LastSaved;
@@ -2410,5 +1725,10 @@ namespace PKHeX.WinForms
         private System.Windows.Forms.Label L_TRNick;
         private System.Windows.Forms.TextBox TB_TRNick;
         private System.Windows.Forms.CheckBox CHK_MegaUnlocked;
+        private Subforms.Save_Editors.TrainerStat TrainerStats;
+        private System.Windows.Forms.PropertyGrid PG_CurrentAppearance;
+        private System.Windows.Forms.CheckBox CHK_MegaRayquazaUnlocked;
+        private System.Windows.Forms.ToolTip Tip1;
+        private System.Windows.Forms.ToolTip Tip2;
     }
 }

@@ -9,19 +9,24 @@ CTRL-B: Export BAK
 CTRL-Q: Quit
 
 CTRL-D: Open PKM Database
-CTRL-F: Open Folder
+CTRL-F: Open Folder List
 CTRL-G: Open Mystery Gift Database
+CTRL-N: Open Encounter Database
+CTRL-M: Open Batch Editor
 CTRL-R: Open Box Report
 CTRL-P: Open About PKHeX
 CTRL-T: Import Showdown Set
 CTRL-SHIFT-T: Export Showdown Set
+CTRL-SHIFT-S: Open Settings
 
 Control + Click on...
 - Species: Import Showdown/Smogon set from Clipboard.
 - Nickname/OT box: Bring up the ingame-special characters.
-- Individual IVs: Set IV to max. (toggles Hyper Training in Gen7 onwards)
+- Individual IVs: Set IV to max (or max-1 if already max).
+- Individual AVs: Set AV to max (or 0 if already max).
 - Individual EVs: Set EV to max.
 - Randomize IVs: Set all IVs to max.
+- Randomize AVs: Set all AVs to max.
 - Randomize EVs: Set all EVs to 0.
 - PP Ups Label: Set all PP Ups to 0. (Click = 3)
 - Friendship Label: Set Friendship to 0. (Click = 255 or Base)
@@ -30,11 +35,16 @@ Control + Click on...
 Alt + Click on...
 - Preview Sprite to load from a QR url on your clipboard.
 - Species: Export Showdown/Smogon set to Clipboard.
+- Randomize AVs: Set all AVs to 0.
 - Individual IVs: Set IV to 0.
+- Individual AVs: Set AV to 0.
 - Individual EVs: Set EV to 0.
 
 Shift + Click on...
 - Preview Sprite to bring up a QR for the viewed Pokémon.
+- Individual IVs: Hyper Train the IV (toggles Hyper Training in Gen7 onwards)
+- Shiny Button: Make Square Shiny
+- Moves: Apply random moveset.
 
 Hold Control when dragging to save encrypted (ekx).
 
@@ -43,6 +53,8 @@ Click on...
 - Level / Met Location label: Suggest encounter information for relevant properties.
 - Moves groupbox: Suggest legal moves.
 - Relearn Moves groupbox: Suggest legal relearn moves.
+- Ball Sprite: Pop up ball editor; legal balls are backlit in green, illegal in red.
+- Nature Label: Copy the other Stat/Behavior nature.
 
 Drop WC7/WC6/PGF/PCD/PGT to convert to PKM in the main tabs.
 
@@ -52,10 +64,7 @@ Doubleclick on the SAV Tab: Auto-detect/Reload latest save.
 
 // Boxes
 
-Control-Click Box Tab: Sort Current Box contents.
-Control-Shift-Click Box Tab: Sort All Boxes.
-Alt-Click Box Tab: Delete Current Box contents.
-Alt-Shift-Click Box Tab: Delete All Boxes.
+Right click on Box Tab: Clear/Sort/Modify Box contents. Hold shift when selecting the action to apply to ALL boxes.
 
 Control-RightClick a Box Slot to show extra options (ie Legality check)
 Control-Drag a Box Slot to Copy-Overwrite
@@ -68,10 +77,17 @@ Alt-Click a slot to delete the data in slot.
 
 Doubleclick the Box tab to open up a new Box Viewer. Only one is allowed at a time, unless you hold shift when doubleclicking.
 
+Control-Click the Box Arrows to jump to the start/end.
+Control-Click on Verify Checksums to legality check all Pokémon in the save file against eachother.
+
 // Party / Battle Box
 Doubleclick on the Party or Battle Box label to export Showdown/Smogon Set (Team) to Clipboard.
 
 // Misc Editors
+
+RIBBONS:
+- Shift-Click the Give All Button to set all legal Ribbons.
+- Shift-Click the Remove All Button to remove all illegal Ribbons.
 
 POKEPUFF:
 - Control Click the All Button to give the best Pokepuffs.
@@ -79,3 +95,6 @@ POKEPUFF:
 
 MYSTERY GIFT:
 - Alt-Click QR to import from QR image.
+
+TRAINER INFO (GO PIKACHU/EEVEE)
+- Drop Go Park entity file (gp1) to import to selected slot.

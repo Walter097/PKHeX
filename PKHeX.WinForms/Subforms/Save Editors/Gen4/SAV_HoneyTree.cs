@@ -7,17 +7,18 @@ namespace PKHeX.WinForms
 {
     public partial class SAV_HoneyTree : Form
     {
-        private readonly SaveFile Origin;
-        private readonly SAV4 SAV;
-        public SAV_HoneyTree(SaveFile sav)
+        private readonly SAV4Sinnoh Origin;
+        private readonly SAV4Sinnoh SAV;
+
+        public SAV_HoneyTree(SAV4Sinnoh sav)
         {
-            SAV = (SAV4)(Origin = sav).Clone();
             InitializeComponent();
             WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
+            SAV = (SAV4Sinnoh)(Origin = sav).Clone();
 
-            if (SAV.DP)
+            if (SAV is SAV4DP)
                 Table = HoneyTree.TableDP;
-            else if (SAV.Pt)
+            else if (SAV is SAV4Pt)
                 Table = HoneyTree.TablePt;
 
             // Get Munchlax tree for this savegame in screen
@@ -28,7 +29,7 @@ namespace PKHeX.WinForms
 
             CB_TreeList.SelectedIndex = 0;
         }
-        
+
         private readonly int[] MunchlaxTrees;
         private readonly int[][] Table;
         private int entry;
@@ -37,6 +38,7 @@ namespace PKHeX.WinForms
 
         private int TreeSpecies => Table[(int)NUD_Group.Value][(int)NUD_Slot.Value];
         private void B_Catchable_Click(object sender, EventArgs e) => NUD_Time.Value = 1080;
+
         private void ChangeGroupSlot(object sender, EventArgs e)
         {
             int species = TreeSpecies;
@@ -48,15 +50,17 @@ namespace PKHeX.WinForms
             if (loading)
                 return;
 
-            if (species == 446 && !MunchlaxTrees.Contains(CB_TreeList.SelectedIndex))
+            if (species == (int)Species.Munchlax && !MunchlaxTrees.Contains(CB_TreeList.SelectedIndex))
                 WinFormsUtil.Alert("Catching Munchlax in this tree will make it illegal for this savegame's TID/SID combination.");
         }
+
         private void ChangeTree(object sender, EventArgs e)
         {
             SaveTree();
             entry = CB_TreeList.SelectedIndex;
             ReadTree();
         }
+
         private void ReadTree()
         {
             loading = true;
@@ -67,14 +71,15 @@ namespace PKHeX.WinForms
             NUD_Group.Value = Math.Min(NUD_Group.Maximum, Tree.Group);
             NUD_Slot.Value = Math.Min(NUD_Slot.Maximum, Tree.Slot);
 
-            ChangeGroupSlot(null, null);
+            ChangeGroupSlot(null, EventArgs.Empty);
             loading = false;
         }
+
         private void SaveTree()
         {
             if (Tree == null)
                 return;
-            
+
             Tree.Time = (uint)NUD_Time.Value;
             Tree.Shake = (int)NUD_Shake.Value;
             Tree.Group = (int)NUD_Group.Value;
@@ -86,9 +91,10 @@ namespace PKHeX.WinForms
         private void B_Save_Click(object sender, EventArgs e)
         {
             SaveTree();
-            Origin.SetData(SAV.Data, 0);
+            Origin.CopyChangesFrom(SAV);
             Close();
         }
+
         private void B_Cancel_Click(object sender, EventArgs e) => Close();
     }
 }

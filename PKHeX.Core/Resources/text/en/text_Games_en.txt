@@ -30,8 +30,8 @@ Omega Ruby
 
 Sun
 Moon
-
-
+Ultra Sun
+Ultra Moon
 GO
 Red
 Blue [INT]/Green [JP]
@@ -40,3 +40,7 @@ Yellow
 Gold
 Silver
 Crystal
+Let's Go, Pikachu!
+Let's Go, Eevee!
+Sword
+Shield

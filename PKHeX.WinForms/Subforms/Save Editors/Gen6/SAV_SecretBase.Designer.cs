@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_SecretBase));
             this.B_Save = new System.Windows.Forms.Button();
             this.B_Cancel = new System.Windows.Forms.Button();
             this.LB_Favorite = new System.Windows.Forms.ListBox();
@@ -115,6 +114,8 @@
             this.MT_Flags = new System.Windows.Forms.MaskedTextBox();
             this.L_FlagsCaptured = new System.Windows.Forms.Label();
             this.B_FDelete = new System.Windows.Forms.Button();
+            this.B_Export = new System.Windows.Forms.Button();
+            this.B_Import = new System.Windows.Forms.Button();
             this.f_PKM.SuspendLayout();
             this.GB_PKM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_FPKM)).BeginInit();
@@ -1138,11 +1139,35 @@
             this.B_FDelete.UseVisualStyleBackColor = true;
             this.B_FDelete.Click += new System.EventHandler(this.B_FDelete_Click);
             // 
+            // B_Export
+            // 
+            this.B_Export.Enabled = false;
+            this.B_Export.Location = new System.Drawing.Point(423, -1);
+            this.B_Export.Name = "B_Export";
+            this.B_Export.Size = new System.Drawing.Size(75, 23);
+            this.B_Export.TabIndex = 24;
+            this.B_Export.Text = "Export";
+            this.B_Export.UseVisualStyleBackColor = true;
+            this.B_Export.Click += new System.EventHandler(this.B_Export_Click);
+            // 
+            // B_Import
+            // 
+            this.B_Import.Enabled = false;
+            this.B_Import.Location = new System.Drawing.Point(346, -1);
+            this.B_Import.Name = "B_Import";
+            this.B_Import.Size = new System.Drawing.Size(75, 23);
+            this.B_Import.TabIndex = 25;
+            this.B_Import.Text = "Import";
+            this.B_Import.UseVisualStyleBackColor = true;
+            this.B_Import.Click += new System.EventHandler(this.B_Import_Click);
+            // 
             // SAV_SecretBase
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(514, 332);
+            this.Controls.Add(this.B_Import);
+            this.Controls.Add(this.B_Export);
             this.Controls.Add(this.B_FDelete);
             this.Controls.Add(this.L_FlagsCaptured);
             this.Controls.Add(this.MT_Flags);
@@ -1155,7 +1180,7 @@
             this.Controls.Add(this.L_Favorite);
             this.Controls.Add(this.LB_Favorite);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::PKHeX.WinForms.Properties.Resources.Icon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SAV_SecretBase";
@@ -1268,5 +1293,7 @@
         private System.Windows.Forms.MaskedTextBox MT_Flags;
         private System.Windows.Forms.Label L_FlagsCaptured;
         private System.Windows.Forms.Button B_FDelete;
+        private System.Windows.Forms.Button B_Export;
+        private System.Windows.Forms.Button B_Import;
     }
 }

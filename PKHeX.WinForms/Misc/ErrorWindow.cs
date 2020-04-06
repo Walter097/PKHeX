@@ -4,12 +4,12 @@ using System.Windows.Forms;
 
 namespace PKHeX.WinForms
 {
-    public partial class ErrorWindow : Form
+    public sealed partial class ErrorWindow : Form
     {
         public static DialogResult ShowErrorDialog(string friendlyMessage, Exception ex, bool allowContinue)
         {
             var lang = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
-            var dialog = new ErrorWindow(lang)
+            using var dialog = new ErrorWindow(lang)
             {
                 ShowContinue = allowContinue,
                 Message = friendlyMessage,
@@ -17,9 +17,7 @@ namespace PKHeX.WinForms
             };
             var dialogResult = dialog.ShowDialog();
             if (dialogResult == DialogResult.Abort)
-            {
                 Environment.Exit(1);
-            }
             return dialogResult;
         }
 
@@ -55,16 +53,17 @@ namespace PKHeX.WinForms
             set => L_Message.Text = value;
         }
 
+        private Exception _error;
+
         public Exception Error
         {
             get => _error;
             set
             {
                 _error = value;
-                UpdateExceptionDetailsMessage();             
+                UpdateExceptionDetailsMessage();
             }
         }
-        private Exception _error;
 
         private void UpdateExceptionDetailsMessage()
         {
@@ -98,7 +97,7 @@ namespace PKHeX.WinForms
             T_ExceptionDetails.Text = details.ToString();
         }
 
-        private void ClickCopyException(object sender, EventArgs e) => Clipboard.SetText(T_ExceptionDetails.Text);
+        private void ClickCopyException(object sender, EventArgs e) => WinFormsUtil.SetClipboardText(T_ExceptionDetails.Text);
 
         private void ClickContinue(object sender, EventArgs e)
         {
@@ -111,6 +110,5 @@ namespace PKHeX.WinForms
             DialogResult = DialogResult.Abort;
             Close();
         }
-        
     }
 }

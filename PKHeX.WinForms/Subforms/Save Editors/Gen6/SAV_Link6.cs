@@ -9,51 +9,39 @@ namespace PKHeX.WinForms
     public partial class SAV_Link6 : Form
     {
         private readonly SaveFile Origin;
-        private readonly SAV6 SAV;
-        public SAV_Link6(SaveFile sav)
-        {
-            SAV = (SAV6)(Origin = sav).Clone();
-            InitializeComponent();
-            foreach (var cb in TAB_Items.Controls.OfType<ComboBox>())
-            {
-                cb.DisplayMember = "Text";
-                cb.ValueMember = "Value";
-                cb.DataSource = new BindingSource(GameInfo.ItemDataSource.Where(item => item.Value <= SAV.MaxItemID).ToArray(), null);
-            }
-            WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
-            byte[] data = SAV.LinkBlock;
-            if (data == null)
-            {
-                WinFormsUtil.Alert("Invalid save file / Link Information");
-                Close();
-                return;
-            }
-            data = data.Skip(0x1FF).Take(PL6.Size).ToArray();
-            LoadLinkData(data);
-        }
+        private readonly ISaveBlock6Main SAV;
 
         private PL6 LinkInfo;
 
+        public SAV_Link6(SaveFile sav)
+        {
+            InitializeComponent();
+            WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
+            SAV = (ISaveBlock6Main)(Origin = sav).Clone();
+            foreach (var cb in TAB_Items.Controls.OfType<ComboBox>())
+            {
+                cb.InitializeBinding();
+                cb.DataSource = new BindingSource(GameInfo.ItemDataSource.Where(item => item.Value <= sav.MaxItemID).ToArray(), null);
+            }
+            LinkInfo = SAV.Link.GetLinkInfo();
+            LoadLinkData();
+        }
+
         private void B_Save_Click(object sender, EventArgs e)
         {
-            byte[] data = new byte[SAV.LinkBlock.Length];
-            Array.Copy(LinkInfo.Data, 0, data, 0x1FF, LinkInfo.Data.Length);
-
-            // Fix Checksum just in case.
-            ushort ccitt = SaveUtil.CRC16_CCITT(data, 0x200, data.Length - 4 - 0x200); // [app,chk)
-            BitConverter.GetBytes(ccitt).CopyTo(data, data.Length - 4);
-
-            SAV.LinkBlock = data;
-            Origin.SetData(SAV.Data, 0);
+            SAV.Link.SetLinkInfo(LinkInfo);
+            Origin.CopyChangesFrom((SaveFile)SAV);
             Close();
         }
+
         private void B_Cancel_Click(object sender, EventArgs e)
         {
             Close();
         }
+
         private void B_Import_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog {Filter = PL6.Filter};
+            using var ofd = new OpenFileDialog {Filter = PL6.Filter};
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
 
@@ -61,28 +49,28 @@ namespace PKHeX.WinForms
             { WinFormsUtil.Alert("Invalid file length"); return; }
 
             byte[] data = File.ReadAllBytes(ofd.FileName);
-            
-            LoadLinkData(data);
+            LinkInfo = new PL6(data);
+
+            LoadLinkData();
             B_Export.Enabled = true;
         }
+
         private void B_Export_Click(object sender, EventArgs e)
         {
             if (LinkInfo.Data == null)
                 return;
 
-            SaveFileDialog sfd = new SaveFileDialog {Filter = PL6.Filter};
+            using var sfd = new SaveFileDialog {Filter = PL6.Filter};
             if (sfd.ShowDialog() != DialogResult.OK)
                 return;
 
             File.WriteAllBytes(sfd.FileName, LinkInfo.Data);
             WinFormsUtil.Alert("Pokémon Link data saved to:" + Environment.NewLine + sfd.FileName);
         }
-        
-        private void LoadLinkData(byte[] data)
-        {
-            LinkInfo = new PL6(data);
 
-            RTB_LinkSource.Text = LinkInfo.Origin_app;
+        private void LoadLinkData()
+        {
+            RTB_LinkSource.Text = LinkInfo.Origin;
             CHK_LinkAvailable.Checked = LinkInfo.PL_enabled;
 
             NUD_BP.Value = LinkInfo.BattlePoints;

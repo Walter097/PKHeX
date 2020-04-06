@@ -2,19 +2,20 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using PKHeX.Core;
-using PKHeX.WinForms.Properties;
+
+using static PKHeX.Core.MessageStrings;
 
 namespace PKHeX.WinForms.Controls
 {
     public partial class ContextMenuSAV : UserControl
     {
-        public ContextMenuSAV()
-        {
-            InitializeComponent();
-        }
+        public ContextMenuSAV() => InitializeComponent();
+
+        public SaveDataEditor<PictureBox> Editor { private get; set; }
+        public SlotChangeManager Manager { get; set; }
 
         public event LegalityRequest RequestEditorLegality;
-        public delegate void LegalityRequest(object sender, EventArgs args, PKM pkm);
+        public delegate void LegalityRequest(object sender, EventArgs e, PKM pkm);
 
         public void OmniClick(object sender, EventArgs e, Keys z)
         {
@@ -23,126 +24,101 @@ namespace PKHeX.WinForms.Controls
                 case Keys.Control: ClickView(sender, e); break;
                 case Keys.Shift: ClickSet(sender, e); break;
                 case Keys.Alt: ClickDelete(sender, e); break;
+                default:
+                    return;
             }
+
+            // restart hovering since the mouse event isn't fired
+            Manager.MouseEnter(sender, e);
         }
-        private static void ClickView(object sender, EventArgs e)
+
+        private void ClickView(object sender, EventArgs e)
         {
-            SlotChangeManager m = GetSenderInfo(ref sender, out SlotChange info);
-            if (m == null)
-                return;
+            var info = GetSenderInfo(ref sender);
             if ((sender as PictureBox)?.Image == null)
             { System.Media.SystemSounds.Asterisk.Play(); return; }
 
-            m.SE.PKME_Tabs.PopulateFields(m.GetPKM(info), false);
-            m.SetColor(info.Box, info.Slot, Resources.slotView);
+            Manager.Hover.Stop();
+            var pkm = Editor.Slots.Get(info.Slot);
+            Editor.PKMEditor.PopulateFields(pkm, false, true);
         }
-        private static void ClickSet(object sender, EventArgs e)
+
+        private void ClickSet(object sender, EventArgs e)
         {
-            SlotChangeManager m = GetSenderInfo(ref sender, out SlotChange info);
-            if (m == null)
+            var editor = Editor.PKMEditor;
+            if (!editor.EditsComplete)
                 return;
-
-            var editor = m.SE.PKME_Tabs;
-            var sav = m.SE.SAV;
-            if (info.IsParty && editor.IsEmptyOrEgg && sav.IsPartyAllEggs(info.Slot - 30) && !m.SE.HaX)
-            { WinFormsUtil.Alert("Can't have empty/egg party."); return; }
-            if (m.SE.SAV.IsSlotLocked(info.Box, info.Slot))
-            { WinFormsUtil.Alert("Can't set to locked slot."); return; }
-
             PKM pk = editor.PreparePKM();
 
-            string[] errata = sav.IsPKMCompatible(pk);
-            if (errata.Length > 0 && DialogResult.Yes != WinFormsUtil.Prompt(MessageBoxButtons.YesNo, string.Join(Environment.NewLine, errata), "Continue?"))
+            var info = GetSenderInfo(ref sender);
+            var sav = info.View.SAV;
+
+            if (!CheckDest(info, sav, pk))
                 return;
 
-            if (info.Slot >= 30)
-                info.Box = -1;
-            if (info.Slot >= 30 && info.Slot < 36) // Party
-            {
-                // If info.Slot isn't overwriting existing PKM, make it write to the lowest empty PKM info.Slot
-                if (sav.PartyCount < info.Slot + 1 - 30)
-                {
-                    info.Slot = sav.PartyCount + 30;
-                    info.Offset = m.SE.GetPKMOffset(info.Slot);
-                }
-                m.SetPKM(pk, info, true, Resources.slotSet);
-            }
-            else if (info.Slot < 30 || m.SE.HaX)
-            {
-                if (info.Slot < 30)
-                {
-                    m.SE.UndoStack.Push(new SlotChange
-                    {
-                        Box = info.Box,
-                        Slot = info.Slot,
-                        Offset = info.Offset,
-                        PKM = sav.GetStoredSlot(info.Offset)
-                    });
-                    m.SE.Menu_Undo.Enabled = true;
-                }
+            var errata = sav.IsPKMCompatible(pk);
+            if (errata.Count > 0 && DialogResult.Yes != WinFormsUtil.Prompt(MessageBoxButtons.YesNo, string.Join(Environment.NewLine, errata), MsgContinue))
+                return;
 
-                m.SetPKM(pk, info, true, Resources.slotSet);
-            }
-
-            editor.LastData = pk.Data;
-            m.SE.RedoStack.Clear(); m.SE.Menu_Redo.Enabled = false;
+            Manager.Hover.Stop();
+            Editor.Slots.Set(info.Slot, pk);
+            Manager.SE.UpdateUndoRedo();
         }
-        private static void ClickDelete(object sender, EventArgs e)
-        {
-            SlotChangeManager m = GetSenderInfo(ref sender, out SlotChange info);
-            if (m == null)
-                return;
 
+        private void ClickDelete(object sender, EventArgs e)
+        {
+            var info = GetSenderInfo(ref sender);
             if ((sender as PictureBox)?.Image == null)
             { System.Media.SystemSounds.Asterisk.Play(); return; }
 
-            var sav = m.SE.SAV;
-            if (info.IsParty && sav.IsPartyAllEggs(info.Slot - 30) && !m.SE.HaX)
-            { WinFormsUtil.Alert("Can't delete this slot."); return; }
-            if (sav.IsSlotLocked(info.Box, info.Slot))
-            { WinFormsUtil.Alert("Can't delete locked slot."); return; }
-
-            if (info.Slot >= 30 && info.Slot < 36) // Party
-            {
-                m.SetPKM(sav.BlankPKM, info, true, Resources.slotDel);
+            var sav = info.View.SAV;
+            var pk = sav.BlankPKM;
+            if (!CheckDest(info, sav, pk))
                 return;
-            }
-            if (info.Slot < 30 || m.SE.HaX)
-            {
-                if (info.Slot < 30)
-                {
-                    m.SE.UndoStack.Push(new SlotChange
-                    {
-                        Box = info.Box,
-                        Slot = info.Slot,
-                        Offset = info.Offset,
-                        PKM = sav.GetStoredSlot(info.Offset)
-                    });
-                    m.SE.Menu_Undo.Enabled = true;
-                }
-                m.SetPKM(sav.BlankPKM, info, true, Resources.slotDel);
-            }
-            else return;
 
-            m.SE.RedoStack.Clear(); m.SE.Menu_Redo.Enabled = false;
+            Manager.Hover.Stop();
+            Editor.Slots.Delete(info.Slot);
+            Manager.SE.UpdateUndoRedo();
         }
+
+        private static bool CheckDest(SlotViewInfo<PictureBox> info, SaveFile sav, PKM pk)
+        {
+            var msg = info.Slot.CanWriteTo(sav, pk);
+            if (msg == WriteBlockedMessage.None)
+                return true;
+
+            switch (msg)
+            {
+                case WriteBlockedMessage.InvalidPartyConfiguration:
+                    WinFormsUtil.Alert(MsgSaveSlotEmpty);
+                    break;
+                case WriteBlockedMessage.IncompatibleFormat:
+                    break;
+                case WriteBlockedMessage.InvalidDestination:
+                    WinFormsUtil.Alert(MsgSaveSlotLocked);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return false;
+        }
+
         private void ClickShowLegality(object sender, EventArgs e)
         {
-            SlotChangeManager m = GetSenderInfo(ref sender, out SlotChange info);
-            if (m == null)
-                return;
-
-            var pk = m.GetPKM(info);
+            var info = GetSenderInfo(ref sender);
+            var sav = info.View.SAV;
+            var pk = info.Slot.Read(sav);
             RequestEditorLegality?.Invoke(sender, e, pk);
         }
+
         private void MenuOpening(object sender, CancelEventArgs e)
         {
             var items = ((ContextMenuStrip)sender).Items;
 
             object ctrl = ((ContextMenuStrip)sender).SourceControl;
-            GetSenderInfo(ref ctrl, out SlotChange info);
+            var info = GetSenderInfo(ref ctrl);
             bool SlotFull = (ctrl as PictureBox)?.Image != null;
-            bool Editable = info.Slot < 36;
+            bool Editable = info.Slot.CanWriteTo(info.View.SAV);
             bool legality = ModifierKeys == Keys.Control;
             ToggleItem(items, mnuSet, Editable);
             ToggleItem(items, mnuDelete, Editable && SlotFull);
@@ -153,32 +129,15 @@ namespace PKHeX.WinForms.Controls
                 e.Cancel = true;
         }
 
-        private static SlotChangeManager GetSenderInfo(ref object sender, out SlotChange loc)
+        private static SlotViewInfo<PictureBox> GetSenderInfo(ref object sender)
         {
-            loc = new SlotChange();
-            var ctrl = WinFormsUtil.GetUnderlyingControl(sender);
-            var obj = ctrl.Parent.Parent;
-            if (obj is BoxEditor b)
-            {
-                loc.Box = b.CurrentBox;
-                loc.Slot = b.GetSlot(sender);
-                loc.Offset = b.GetOffset(loc.Slot, loc.Box);
-                loc.Parent = b.FindForm();
-                sender = ctrl;
-                return b.M;
-            }
-            obj = obj.Parent.Parent;
-            if (obj is SAVEditor z)
-            {
-                loc.Box = z.Box.CurrentBox;
-                loc.Slot = z.GetSlot(sender);
-                loc.Offset = z.GetPKMOffset(loc.Slot, loc.Box);
-                loc.Parent = z.FindForm();
-                sender = ctrl;
-                return z.M;
-            }
-            return null;
+            var pb = WinFormsUtil.GetUnderlyingControl<PictureBox>(sender);
+            var view = WinFormsUtil.FindFirstControlOfType<ISlotViewer<PictureBox>>(pb);
+            var loc = view.GetSlotData(pb);
+            sender = pb;
+            return new SlotViewInfo<PictureBox>(loc, view);
         }
+
         private static void ToggleItem(ToolStripItemCollection items, ToolStripItem item, bool visible, bool first = false)
         {
             if (visible)
@@ -189,7 +148,9 @@ namespace PKHeX.WinForms.Controls
                     items.Add(item);
             }
             else if (items.Contains(item))
+            {
                 items.Remove(item);
+            }
         }
     }
 }

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_Pokedex4));
             this.B_Cancel = new System.Windows.Forms.Button();
             this.LB_Species = new System.Windows.Forms.ListBox();
             this.CHK_Caught = new System.Windows.Forms.CheckBox();
@@ -52,6 +51,7 @@
             this.mnuCaughtAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuComplete = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuUpgraded = new System.Windows.Forms.ToolStripMenuItem();
+            this.CB_DexUpgraded = new System.Windows.Forms.ToolStripComboBox();
             this.CHK_Seen = new System.Windows.Forms.CheckBox();
             this.LB_Gender = new System.Windows.Forms.ListBox();
             this.B_GUp = new System.Windows.Forms.Button();
@@ -67,7 +67,6 @@
             this.LB_Form = new System.Windows.Forms.ListBox();
             this.L_Seen = new System.Windows.Forms.Label();
             this.L_NotSeen = new System.Windows.Forms.Label();
-            this.CB_DexUpgraded = new System.Windows.Forms.ToolStripComboBox();
             this.GB_Language.SuspendLayout();
             this.modifyMenu.SuspendLayout();
             this.SuspendLayout();
@@ -185,7 +184,6 @@
             this.CB_Species.Name = "CB_Species";
             this.CB_Species.Size = new System.Drawing.Size(92, 21);
             this.CB_Species.TabIndex = 21;
-            this.CB_Species.SelectedIndexChanged += new System.EventHandler(this.ChangeCBSpecies);
             this.CB_Species.SelectedValueChanged += new System.EventHandler(this.ChangeCBSpecies);
             // 
             // B_GiveAll
@@ -245,7 +243,7 @@
             this.mnuComplete,
             this.mnuUpgraded});
             this.modifyMenu.Name = "modifyMenu";
-            this.modifyMenu.Size = new System.Drawing.Size(149, 114);
+            this.modifyMenu.Size = new System.Drawing.Size(149, 136);
             // 
             // mnuSeenNone
             // 
@@ -289,6 +287,12 @@
             this.mnuUpgraded.Name = "mnuUpgraded";
             this.mnuUpgraded.Size = new System.Drawing.Size(148, 22);
             this.mnuUpgraded.Text = "Dex Upgrade";
+            // 
+            // CB_DexUpgraded
+            // 
+            this.CB_DexUpgraded.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CB_DexUpgraded.Name = "CB_DexUpgraded";
+            this.CB_DexUpgraded.Size = new System.Drawing.Size(112, 23);
             // 
             // CHK_Seen
             // 
@@ -431,12 +435,6 @@
             this.L_NotSeen.TabIndex = 58;
             this.L_NotSeen.Text = "Not Seen";
             // 
-            // CB_DexUpgraded
-            // 
-            this.CB_DexUpgraded.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CB_DexUpgraded.Name = "CB_DexUpgraded";
-            this.CB_DexUpgraded.Size = new System.Drawing.Size(112, 23);
-            // 
             // SAV_Pokedex4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -467,7 +465,7 @@
             this.Controls.Add(this.LB_Species);
             this.Controls.Add(this.B_Cancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::PKHeX.WinForms.Properties.Resources.Icon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SAV_Pokedex4";

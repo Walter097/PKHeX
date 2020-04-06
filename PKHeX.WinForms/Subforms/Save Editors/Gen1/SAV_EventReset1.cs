@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PKHeX.Core;
@@ -10,9 +9,11 @@ namespace PKHeX.WinForms
     {
         private readonly G1OverworldSpawner Overworld;
         private void SAV_EventReset1_FormClosing(object sender, FormClosingEventArgs e) => Overworld.Save();
+
         public SAV_EventReset1(SaveFile sav)
         {
             InitializeComponent();
+            WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
             Overworld = new G1OverworldSpawner((SAV1)sav);
 
             InitializeButtons();
@@ -24,7 +25,10 @@ namespace PKHeX.WinForms
             foreach (var pair in pairs)
             {
                 var split = pair.Name.Split('_');
-                int species = Array.IndexOf(PKX.SpeciesLang[2], split[0].Substring(4));
+                var specName = split[0].Substring(4);
+
+                // convert species name to current localization language
+                int species = SpeciesName.GetSpeciesID(specName);
                 var pkmname = GameInfo.Strings.specieslist[species];
 
                 if (split.Length != 1)
@@ -32,7 +36,7 @@ namespace PKHeX.WinForms
                 var b = new Button
                 {
                     Text = pkmname, Enabled = pair.IsDespawned,
-                    Size = new Size(Width / 2 - 25, 22),
+                    Size = new Size((Width / 2) - 25, 22),
                 };
                 b.Click += (s, e) =>
                 {

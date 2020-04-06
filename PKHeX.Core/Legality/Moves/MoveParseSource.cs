@@ -1,10 +1,13 @@
-﻿namespace PKHeX.Core
+﻿using System;
+using System.Collections.Generic;
+
+namespace PKHeX.Core
 {
     internal class MoveParseSource
     {
-        private static readonly int[] Empty = new int[0];
+        private static readonly int[] Empty = Array.Empty<int>();
         public int[] CurrentMoves { get; set; } = Empty;
-        public int[] SpecialSource { get; set; } = Empty;
+        public IReadOnlyList<int> SpecialSource { get; set; } = Empty;
         public int[] NonTradeBackLevelUpMoves { get; set; } = Empty;
 
         /// <summary>
@@ -14,6 +17,6 @@
 
         public int[] EggLevelUpSource { get; set; } = Empty;
         public int[] EggMoveSource { get; set; } = Empty;
-        public int[] EggEventSource { get; set; } = Empty;
+        public IReadOnlyList<int> EggEventSource { get; set; } = Empty;
     }
 }

@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
 namespace PKHeX.Core
 {
-    public partial class Util
+    public static partial class Util
     {
         private const string TranslationSplitter = " = ";
+        private static readonly Assembly thisAssembly = typeof(Util).GetTypeInfo().Assembly;
+        private static readonly string[] manifestResourceNames = thisAssembly.GetManifestResourceNames();
+        private static readonly Dictionary<string, string> resourceNameMap = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string[]> stringListCache = new Dictionary<string, string[]>();
 
-        #region String Lists        
+        private static readonly object getStringListLoadLock = new object();
+
+        #region String Lists
 
         /// <summary>
         /// Gets a list of all Pokémon species names.
@@ -68,43 +75,114 @@ namespace PKHeX.Core
         /// <returns>An array of strings whose indexes correspond to the IDs of each item.</returns>
         public static string[] GetItemsList(string language) => GetStringList("items", language);
 
+        public static string[][] GetLanguageStrings7(string fileName)
+        {
+            return new[]
+            {
+                Array.Empty<string>(), // 0 - None
+                GetStringList(fileName, "ja"), // 1
+                GetStringList(fileName, "en"), // 2
+                GetStringList(fileName, "fr"), // 3
+                GetStringList(fileName, "it"), // 4
+                GetStringList(fileName, "de"), // 5
+                Array.Empty<string>(), // 6 - None
+                GetStringList(fileName, "es"), // 7
+            };
+        }
+
+        public static string[][] GetLanguageStrings8(string fileName)
+        {
+            return new[]
+            {
+                Array.Empty<string>(), // 0 - None
+                GetStringList(fileName, "ja"), // 1
+                GetStringList(fileName, "en"), // 2
+                GetStringList(fileName, "fr"), // 3
+                GetStringList(fileName, "it"), // 4
+                GetStringList(fileName, "de"), // 5
+                Array.Empty<string>(), // 6 - None
+                GetStringList(fileName, "es"), // 7
+                GetStringList(fileName, "ko"), // 8
+            };
+        }
+
+        public static string[][] GetLanguageStrings10(string fileName, string zh2 = "zh")
+        {
+            return new[]
+            {
+                Array.Empty<string>(), // 0 - None
+                GetStringList(fileName, "ja"), // 1
+                GetStringList(fileName, "en"), // 2
+                GetStringList(fileName, "fr"), // 3
+                GetStringList(fileName, "it"), // 4
+                GetStringList(fileName, "de"), // 5
+                Array.Empty<string>(), // 6 - None
+                GetStringList(fileName, "es"), // 7
+                GetStringList(fileName, "ko"), // 8
+                GetStringList(fileName, "zh"), // 9
+                GetStringList(fileName, zh2), // 10
+            };
+        }
+
         #endregion
 
-        public static string[] GetStringList(string f)
+        public static string[] GetStringList(string fileName)
         {
-            var txt = Properties.Resources.ResourceManager.GetString(f); // Fetch File, \n to list.
-            if (txt == null) return new string[0];
+            if (IsStringListCached(fileName, out var result))
+                return result;
+            var txt = GetStringResource(fileName); // Fetch File, \n to list.
+            return LoadStringList(fileName, txt);
+        }
+
+        public static bool IsStringListCached(string fileName, out string[] result)
+        {
+            lock (getStringListLoadLock) // Make sure only one thread can read the cache
+                return stringListCache.TryGetValue(fileName, out result);
+        }
+
+        public static string[] LoadStringList(string file, string? txt)
+        {
+            if (txt == null)
+                return Array.Empty<string>();
             string[] rawlist = txt.Split('\n');
             for (int i = 0; i < rawlist.Length; i++)
-                rawlist[i] = rawlist[i].Trim();
-            return rawlist;
-        }
-        public static string[] GetStringList(string f, string l, string type = "text") => GetStringList($"{type}_{f}_{l}");
-        public static string[] GetNulledStringArray(string[] SimpleStringList)
-        {
-            try
+                rawlist[i] = rawlist[i].TrimEnd('\r');
+
+            lock (getStringListLoadLock) // Make sure only one thread can write to the cache
             {
-                int len = ToInt32(SimpleStringList.Last().Split(',')[0]) + 1;
-                string[] newlist = new string[len];
-                for (int i = 1; i < SimpleStringList.Length; i++)
-                {
-                    var split = SimpleStringList[i].Split(',');
-                    newlist[ToInt32(split[0])] = split[1];
-                }
-                return newlist;
+                if (!stringListCache.ContainsKey(file)) // Check cache again in case of race condition
+                    stringListCache.Add(file, rawlist);
             }
-            catch { return null; }
+
+            return (string[])rawlist.Clone();
         }
+
+        public static string[] GetStringList(string fileName, string lang2char, string type = "text") => GetStringList($"{type}_{fileName}_{lang2char}");
 
         public static byte[] GetBinaryResource(string name)
         {
-            using (var resource = typeof(Util).GetTypeInfo().Assembly.GetManifestResourceStream(
-                $"PKHeX.Core.Resources.byte.{name}"))
+            using var resource = thisAssembly.GetManifestResourceStream($"PKHeX.Core.Resources.byte.{name}");
+            var buffer = new byte[resource.Length];
+            resource.Read(buffer, 0, (int)resource.Length);
+            return buffer;
+        }
+
+        public static string? GetStringResource(string name)
+        {
+            if (!resourceNameMap.TryGetValue(name, out var resname))
             {
-                var buffer = new byte[resource.Length];
-                resource.Read(buffer, 0, (int)resource.Length);
-                return buffer;
-            }               
+                bool Match(string x) => x.StartsWith("PKHeX.Core.Resources.text.") && x.EndsWith($"{name}.txt", StringComparison.OrdinalIgnoreCase);
+                resname = Array.Find(manifestResourceNames, Match);
+                if (resname == null)
+                    return null;
+                resourceNameMap.Add(name, resname);
+            }
+
+            using var resource = thisAssembly.GetManifestResourceStream(resname);
+            if (resource == null)
+                return null;
+            using var reader = new StreamReader(resource);
+            return reader.ReadToEnd();
         }
 
         #region Non-Form Translation
@@ -112,7 +190,6 @@ namespace PKHeX.Core
         /// Gets the names of the properties defined in the given input
         /// </summary>
         /// <param name="input">Enumerable of translation definitions in the form "Property = Value".</param>
-        /// <returns></returns>
         private static string[] GetProperties(IEnumerable<string> input)
         {
             return input.Select(l => l.Substring(0, l.IndexOf(TranslationSplitter, StringComparison.Ordinal))).ToArray();
@@ -120,17 +197,24 @@ namespace PKHeX.Core
 
         private static IEnumerable<string> DumpStrings(Type t)
         {
-            var props = ReflectUtil.GetPropertiesStartWithPrefix(t, "V");
-            return props.Select(p => $"{p}{TranslationSplitter}{ReflectUtil.GetValue(t, p).ToString()}");
+            var props = ReflectUtil.GetPropertiesStartWithPrefix(t, string.Empty);
+            return props.Select(p => $"{p}{TranslationSplitter}{ReflectUtil.GetValue(t, p)}");
         }
 
         /// <summary>
         /// Gets the current localization in a static class containing language-specific strings
         /// </summary>
-        public static string[] GetLocalization(Type t, string[] existingLines = null)
+        /// <param name="t"></param>
+        public static string[] GetLocalization(Type t) => DumpStrings(t).ToArray();
+
+        /// <summary>
+        /// Gets the current localization in a static class containing language-specific strings
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="existingLines">Existing localization lines (if provided)</param>
+        public static string[] GetLocalization(Type t, string[] existingLines)
         {
-            existingLines = existingLines ?? new string[0];
-            var currentLines = DumpStrings(t).ToArray();
+            var currentLines = GetLocalization(t);
             var existing = GetProperties(existingLines);
             var current = GetProperties(currentLines);
 
@@ -148,9 +232,9 @@ namespace PKHeX.Core
         /// </summary>
         /// <param name="t">Type of the static class containing the desired strings.</param>
         /// <param name="lines">Lines containing the localized strings</param>
-        private static void SetLocalization(Type t, IEnumerable<string> lines)
-        {            
-            if (lines == null)
+        private static void SetLocalization(Type t, IReadOnlyList<string> lines)
+        {
+            if (lines.Count == 0)
                 return;
             foreach (var line in lines.Where(l => l != null))
             {
@@ -162,11 +246,12 @@ namespace PKHeX.Core
 
                 try
                 {
-                    ReflectUtil.SetValue(t, prop.ToUpper(), value);
+                    ReflectUtil.SetValue(t, prop, value);
                 }
-                catch
+                catch (Exception e)
                 {
                     Debug.WriteLine($"Property not present: {prop} || Value written: {value}");
+                    Debug.WriteLine(e.Message);
                 }
             }
         }
@@ -196,62 +281,139 @@ namespace PKHeX.Core
         #endregion
 
         #region DataSource Providing
-        public static List<ComboItem> GetCBList(string textfile, string lang)
-        {
-            // Set up
-            string[] inputCSV = GetStringList(textfile);
 
-            // Get Language we're fetching for
-            int index = Array.IndexOf(new[] { "ja", "en", "fr", "de", "it", "es", "ko", "zh", }, lang);
+        private static readonly string[] CountryRegionLanguages = {"ja", "en", "fr", "de", "it", "es", "zh", "ko"};
 
-            // Gather our data from the input file
-            return inputCSV.Skip(1)
-                .Select(entry => entry.Split(','))
-                .Select(data => new ComboItem { Text = data[1 + index], Value = Convert.ToInt32(data[0]) })
-                .OrderBy(z => z.Text)
-                .ToList();
-        }
-        public static List<ComboItem> GetUnsortedCBList(string textfile)
+        public static List<ComboItem> GetCountryRegionList(string textfile, string lang)
         {
             string[] inputCSV = GetStringList(textfile);
-            return inputCSV.Skip(1)
-                .Select(entry => entry.Split(','))
-                .Select(data => new ComboItem { Text = data[1], Value = Convert.ToInt32(data[0]) })
-                .ToList();
+            int index = Array.IndexOf(CountryRegionLanguages, lang);
+            return GetCBListCSVSorted(inputCSV, index);
         }
-        public static List<ComboItem> GetCBList(string[] inStrings, params int[][] allowed)
+
+        private static List<ComboItem> GetCBListCSVSorted(string[] inputCSV, int index = 0)
         {
-            if (allowed?.First() == null)
-                allowed = new[] { Enumerable.Range(0, inStrings.Length).ToArray() };
-
-            return allowed.SelectMany(list => list
-                .Select(z => new ComboItem { Text = inStrings[z], Value = z })
-                .OrderBy(z => z.Text))
-                .ToList();
+            var list = GetCBListFromCSV(inputCSV, index);
+            list.Sort(Comparer);
+            return list;
         }
-        public static List<ComboItem> GetOffsetCBList(List<ComboItem> cbList, string[] inStrings, int offset, int[] allowed)
+
+        public static List<ComboItem> GetCSVUnsortedCBList(string textfile)
         {
-            if (allowed == null)
-                allowed = Enumerable.Range(0, inStrings.Length).ToArray();
-
-            var list = allowed
-                .Select((z, i) => new ComboItem {Text = inStrings[z - offset], Value = z})
-                .OrderBy(z => z.Text);
-
-            cbList.AddRange(list);
-            return cbList;
+            string[] inputCSV = GetStringList(textfile);
+            return GetCBListFromCSV(inputCSV, 0);
         }
+
+        private static List<ComboItem> GetCBListFromCSV(IReadOnlyList<string> inputCSV, int index)
+        {
+            var arr = new List<ComboItem>(inputCSV.Count - 1); // skip header
+            index++;
+            for (int i = 1; i < inputCSV.Count; i++)
+            {
+                var line = inputCSV[i];
+                var zeroth = line.IndexOf(',');
+
+                var val = line.Substring(0, zeroth);
+                var text = StringUtil.GetNthEntry(line, index, zeroth);
+                var item = new ComboItem(text, Convert.ToInt32(val));
+                arr.Add(item);
+            }
+            return arr;
+        }
+
+        public static List<ComboItem> GetCBList(IReadOnlyList<string> inStrings)
+        {
+            var list = new List<ComboItem>(inStrings.Count);
+            for (int i = 0; i < inStrings.Count; i++)
+                list.Add(new ComboItem(inStrings[i], i));
+            list.Sort(Comparer);
+            return list;
+        }
+
+        public static List<ComboItem> GetCBList(IReadOnlyList<string> inStrings, IReadOnlyList<ushort> allowed)
+        {
+            var list = new List<ComboItem>(allowed.Count + 1) { new ComboItem(inStrings[0], 0) };
+            foreach (var index in allowed)
+                list.Add(new ComboItem(inStrings[index], index));
+            list.Sort(Comparer);
+            return list;
+        }
+
+        public static List<ComboItem> GetCBList(IReadOnlyList<string> inStrings, int index, int offset = 0)
+        {
+            var list = new List<ComboItem>();
+            AddCBWithOffset(list, inStrings, offset, index);
+            return list;
+        }
+
+        public static List<ComboItem> GetCBList(IReadOnlyList<string> inStrings, params int[][] allowed)
+        {
+            var count = allowed.Sum(z => z.Length);
+            var list = new List<ComboItem>(count);
+            foreach (var arr in allowed)
+                AddCB(list, inStrings, arr);
+            return list;
+        }
+
+        public static void AddCBWithOffset(List<ComboItem> list, IReadOnlyList<string> inStrings, int offset, int index)
+        {
+            var item = new ComboItem(inStrings[index - offset], index);
+            list.Add(item);
+        }
+
+        public static void AddCBWithOffset(List<ComboItem> cbList, IReadOnlyList<string> inStrings, int offset, params int[] allowed)
+        {
+            int beginCount = cbList.Count;
+            foreach (var index in allowed)
+            {
+                var item = new ComboItem(inStrings[index - offset], index);
+                cbList.Add(item);
+            }
+            cbList.Sort(beginCount, allowed.Length, Comparer);
+        }
+
+        public static void AddCB(List<ComboItem> cbList, IReadOnlyList<string> inStrings, int[] allowed)
+        {
+            int beginCount = cbList.Count;
+            foreach (var index in allowed)
+            {
+                var item = new ComboItem(inStrings[index], index);
+                cbList.Add(item);
+            }
+            cbList.Sort(beginCount, allowed.Length, Comparer);
+        }
+
         public static List<ComboItem> GetVariedCBListBall(string[] inStrings, int[] stringNum, int[] stringVal)
         {
-            // First 3 Balls are always first
-            List<ComboItem> newlist = new List<ComboItem>();
-            for (int i = 4; i > 1; i--) // add 4,3,2
-                newlist.Add(new ComboItem { Text = inStrings[i], Value = i });
+            const int forcedTop = 3; // 3 Balls are preferentially first
+            var list = new List<ComboItem>(forcedTop + stringNum.Length)
+            {
+                new ComboItem(inStrings[4], (int)Ball.Poke),
+                new ComboItem(inStrings[3], (int)Ball.Great),
+                new ComboItem(inStrings[2], (int)Ball.Ultra),
+            };
 
-            newlist.AddRange(stringNum
-                .Select((z, i) => new ComboItem{ Text = inStrings[z], Value = stringVal[i]})
-                .OrderBy(z => z.Text));
-            return newlist;
+            for (int i = 0; i < stringNum.Length; i++)
+            {
+                int index = stringNum[i];
+                var val = stringVal[i];
+                var txt = inStrings[index];
+                list.Add(new ComboItem(txt, val));
+            }
+
+            list.Sort(forcedTop, stringNum.Length, Comparer);
+            return list
+;
+        }
+
+        private static readonly FunctorComparer<ComboItem> Comparer =
+            new FunctorComparer<ComboItem>((a, b) => string.CompareOrdinal(a.Text, b.Text));
+
+        private sealed class FunctorComparer<T> : IComparer<T>
+        {
+            private readonly Comparison<T> Comparison;
+            public FunctorComparer(Comparison<T> comparison) => Comparison = comparison;
+            public int Compare(T x, T y) => Comparison(x, y);
         }
         #endregion
     }

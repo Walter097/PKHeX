@@ -1,7 +1,7 @@
 ﻿namespace PKHeX.Core
 {
     /// <summary> Common Ribbons introduced in Generation 4 </summary>
-    internal interface IRibbonSetCommon4
+    public interface IRibbonSetCommon4
     {
         bool RibbonChampionSinnoh { get; set; }
         bool RibbonAlert { get; set; }
@@ -25,10 +25,9 @@
         {
             nameof(IRibbonSetCommon4.RibbonGorgeous), nameof(IRibbonSetCommon4.RibbonRoyal), nameof(IRibbonSetCommon4.RibbonGorgeousRoyal),
         };
+
         internal static bool[] RibbonBitsCosmetic(this IRibbonSetCommon4 set)
         {
-            if (set == null)
-                return new bool[3];
             return new[]
             {
                 set.RibbonGorgeous,
@@ -36,23 +35,25 @@
                 set.RibbonGorgeousRoyal,
             };
         }
-        internal static string[] RibbonNamesCosmetic(this IRibbonSetCommon4 set) => RibbonSetNamesCommon4;
+
+        internal static string[] RibbonNamesCosmetic(this IRibbonSetCommon4 _) => RibbonSetNamesCommon4;
+
         private static readonly string[] RibbonSetNamesCommon4Only =
         {
             nameof(IRibbonSetCommon4.RibbonRecord), nameof(IRibbonSetCommon4.RibbonChampionSinnoh), nameof(IRibbonSetCommon4.RibbonLegend),
         };
+
         internal static bool[] RibbonBitsOnly(this IRibbonSetCommon4 set)
         {
-            if (set == null)
-                return new bool[3];
             return new[]
             {
-                set.RibbonChampionSinnoh,
                 set.RibbonRecord,
+                set.RibbonChampionSinnoh,
                 set.RibbonLegend,
             };
         }
-        internal static string[] RibbonNamesOnly(this IRibbonSetCommon4 set) => RibbonSetNamesCommon4Only;
+
+        internal static string[] RibbonNamesOnly(this IRibbonSetCommon4 _) => RibbonSetNamesCommon4Only;
 
         private static readonly string[] RibbonSetNamesCommon4Daily =
         {
@@ -63,8 +64,6 @@
 
         internal static bool[] RibbonBitsDaily(this IRibbonSetCommon4 set)
         {
-            if (set == null)
-                return new bool[7];
             return new[]
             {
                 set.RibbonAlert,
@@ -76,6 +75,7 @@
                 set.RibbonSmile,
             };
         }
-        internal static string[] RibbonNamesDaily(this IRibbonSetCommon4 set) => RibbonSetNamesCommon4Daily;
+
+        internal static string[] RibbonNamesDaily(this IRibbonSetCommon4 _) => RibbonSetNamesCommon4Daily;
     }
 }

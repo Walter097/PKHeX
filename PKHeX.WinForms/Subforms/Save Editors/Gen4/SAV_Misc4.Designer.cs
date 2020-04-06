@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_Misc4));
+            this.components = new System.ComponentModel.Container();
             this.B_Cancel = new System.Windows.Forms.Button();
             this.B_Save = new System.Windows.Forms.Button();
             this.TC_Misc = new System.Windows.Forms.TabControl();
             this.TAB_Main = new System.Windows.Forms.TabPage();
+            this.NUD_Coin = new System.Windows.Forms.NumericUpDown();
+            this.L_Coin = new System.Windows.Forms.Label();
             this.L_CurrentMap = new System.Windows.Forms.Label();
             this.L_UGFlags = new System.Windows.Forms.Label();
             this.NUD_UGFlags = new System.Windows.Forms.NumericUpDown();
@@ -98,8 +100,18 @@
             this.L_CastleRank01 = new System.Windows.Forms.Label();
             this.TAB_Walker = new System.Windows.Forms.TabPage();
             this.B_UnlockCourses = new System.Windows.Forms.Button();
+            this.Tab_Misc = new System.Windows.Forms.TabPage();
+            this.B_AllSealsIllegal = new System.Windows.Forms.Button();
+            this.B_AllSealsLegal = new System.Windows.Forms.Button();
+            this.Tab_Poffins = new System.Windows.Forms.TabPage();
+            this.poffinCase4Editor1 = new PKHeX.WinForms.PoffinCase4Editor();
+            this.Tab_PokeGear = new System.Windows.Forms.TabPage();
+            this.pokeGear4Editor1 = new PKHeX.WinForms.PokeGear4Editor();
+            this.tip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.tip2 = new System.Windows.Forms.ToolTip(this.components);
             this.TC_Misc.SuspendLayout();
             this.TAB_Main.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_Coin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_UGFlags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_BP)).BeginInit();
             this.GB_FlyDest.SuspendLayout();
@@ -136,6 +148,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.NUD_CastleRankItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_CastleRankInfo)).BeginInit();
             this.TAB_Walker.SuspendLayout();
+            this.Tab_Misc.SuspendLayout();
+            this.Tab_Poffins.SuspendLayout();
+            this.Tab_PokeGear.SuspendLayout();
             this.SuspendLayout();
             // 
             // B_Cancel
@@ -162,9 +177,15 @@
             // 
             // TC_Misc
             // 
+            this.TC_Misc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TC_Misc.Controls.Add(this.TAB_Main);
             this.TC_Misc.Controls.Add(this.TAB_BF);
             this.TC_Misc.Controls.Add(this.TAB_Walker);
+            this.TC_Misc.Controls.Add(this.Tab_Misc);
+            this.TC_Misc.Controls.Add(this.Tab_Poffins);
+            this.TC_Misc.Controls.Add(this.Tab_PokeGear);
             this.TC_Misc.Location = new System.Drawing.Point(12, 13);
             this.TC_Misc.Name = "TC_Misc";
             this.TC_Misc.SelectedIndex = 0;
@@ -173,6 +194,8 @@
             // 
             // TAB_Main
             // 
+            this.TAB_Main.Controls.Add(this.NUD_Coin);
+            this.TAB_Main.Controls.Add(this.L_Coin);
             this.TAB_Main.Controls.Add(this.L_CurrentMap);
             this.TAB_Main.Controls.Add(this.L_UGFlags);
             this.TAB_Main.Controls.Add(this.NUD_UGFlags);
@@ -189,6 +212,32 @@
             this.TAB_Main.UseVisualStyleBackColor = true;
             this.TAB_Main.DragDrop += new System.Windows.Forms.DragEventHandler(this.TAB_Poketch_DragDrop);
             this.TAB_Main.DragEnter += new System.Windows.Forms.DragEventHandler(this.TAB_Poketch_DragEnter);
+            // 
+            // NUD_Coin
+            // 
+            this.NUD_Coin.Location = new System.Drawing.Point(122, 9);
+            this.NUD_Coin.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.NUD_Coin.Name = "NUD_Coin";
+            this.NUD_Coin.Size = new System.Drawing.Size(51, 20);
+            this.NUD_Coin.TabIndex = 9;
+            this.NUD_Coin.Value = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            // 
+            // L_Coin
+            // 
+            this.L_Coin.Location = new System.Drawing.Point(80, 6);
+            this.L_Coin.Name = "L_Coin";
+            this.L_Coin.Size = new System.Drawing.Size(40, 22);
+            this.L_Coin.TabIndex = 10;
+            this.L_Coin.Text = "Coin:";
+            this.L_Coin.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // L_CurrentMap
             // 
@@ -227,7 +276,7 @@
             // 
             // NUD_BP
             // 
-            this.NUD_BP.Location = new System.Drawing.Point(34, 8);
+            this.NUD_BP.Location = new System.Drawing.Point(30, 8);
             this.NUD_BP.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -244,7 +293,7 @@
             // 
             // L_BP
             // 
-            this.L_BP.Location = new System.Drawing.Point(3, 6);
+            this.L_BP.Location = new System.Drawing.Point(-1, 6);
             this.L_BP.Name = "L_BP";
             this.L_BP.Size = new System.Drawing.Size(30, 22);
             this.L_BP.TabIndex = 1;
@@ -1118,6 +1167,76 @@
             this.B_UnlockCourses.UseVisualStyleBackColor = true;
             this.B_UnlockCourses.Click += new System.EventHandler(this.B_UnlockCourses_Click);
             // 
+            // Tab_Misc
+            // 
+            this.Tab_Misc.Controls.Add(this.B_AllSealsIllegal);
+            this.Tab_Misc.Controls.Add(this.B_AllSealsLegal);
+            this.Tab_Misc.Location = new System.Drawing.Point(4, 22);
+            this.Tab_Misc.Name = "Tab_Misc";
+            this.Tab_Misc.Padding = new System.Windows.Forms.Padding(3);
+            this.Tab_Misc.Size = new System.Drawing.Size(373, 239);
+            this.Tab_Misc.TabIndex = 3;
+            this.Tab_Misc.Text = "Misc";
+            this.Tab_Misc.UseVisualStyleBackColor = true;
+            // 
+            // B_AllSealsIllegal
+            // 
+            this.B_AllSealsIllegal.Location = new System.Drawing.Point(6, 49);
+            this.B_AllSealsIllegal.Name = "B_AllSealsIllegal";
+            this.B_AllSealsIllegal.Size = new System.Drawing.Size(120, 37);
+            this.B_AllSealsIllegal.TabIndex = 1;
+            this.B_AllSealsIllegal.Text = "Give All Seals (Illegal)";
+            this.B_AllSealsIllegal.UseVisualStyleBackColor = true;
+            this.B_AllSealsIllegal.Click += new System.EventHandler(this.OnBAllSealsLegalOnClick);
+            // 
+            // B_AllSealsLegal
+            // 
+            this.B_AllSealsLegal.Location = new System.Drawing.Point(6, 6);
+            this.B_AllSealsLegal.Name = "B_AllSealsLegal";
+            this.B_AllSealsLegal.Size = new System.Drawing.Size(120, 37);
+            this.B_AllSealsLegal.TabIndex = 0;
+            this.B_AllSealsLegal.Text = "Give All Seals (Legal)";
+            this.B_AllSealsLegal.UseVisualStyleBackColor = true;
+            this.B_AllSealsLegal.Click += new System.EventHandler(this.OnBAllSealsLegalOnClick);
+            // 
+            // Tab_Poffins
+            // 
+            this.Tab_Poffins.Controls.Add(this.poffinCase4Editor1);
+            this.Tab_Poffins.Location = new System.Drawing.Point(4, 22);
+            this.Tab_Poffins.Name = "Tab_Poffins";
+            this.Tab_Poffins.Padding = new System.Windows.Forms.Padding(3);
+            this.Tab_Poffins.Size = new System.Drawing.Size(373, 239);
+            this.Tab_Poffins.TabIndex = 4;
+            this.Tab_Poffins.Text = "Poffins";
+            this.Tab_Poffins.UseVisualStyleBackColor = true;
+            // 
+            // poffinCase4Editor1
+            // 
+            this.poffinCase4Editor1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.poffinCase4Editor1.Location = new System.Drawing.Point(3, 3);
+            this.poffinCase4Editor1.Name = "poffinCase4Editor1";
+            this.poffinCase4Editor1.Size = new System.Drawing.Size(367, 233);
+            this.poffinCase4Editor1.TabIndex = 0;
+            // 
+            // Tab_PokeGear
+            // 
+            this.Tab_PokeGear.Controls.Add(this.pokeGear4Editor1);
+            this.Tab_PokeGear.Location = new System.Drawing.Point(4, 22);
+            this.Tab_PokeGear.Name = "Tab_PokeGear";
+            this.Tab_PokeGear.Padding = new System.Windows.Forms.Padding(3);
+            this.Tab_PokeGear.Size = new System.Drawing.Size(373, 239);
+            this.Tab_PokeGear.TabIndex = 5;
+            this.Tab_PokeGear.Text = "PokeGear";
+            this.Tab_PokeGear.UseVisualStyleBackColor = true;
+            // 
+            // pokeGear4Editor1
+            // 
+            this.pokeGear4Editor1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pokeGear4Editor1.Location = new System.Drawing.Point(3, 3);
+            this.pokeGear4Editor1.Name = "pokeGear4Editor1";
+            this.pokeGear4Editor1.Size = new System.Drawing.Size(367, 233);
+            this.pokeGear4Editor1.TabIndex = 0;
+            // 
             // SAV_Misc4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1126,12 +1245,13 @@
             this.Controls.Add(this.B_Cancel);
             this.Controls.Add(this.B_Save);
             this.Controls.Add(this.TC_Misc);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::PKHeX.WinForms.Properties.Resources.Icon;
             this.Name = "SAV_Misc4";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Misc Editor";
             this.TC_Misc.ResumeLayout(false);
             this.TAB_Main.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_Coin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_UGFlags)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_BP)).EndInit();
             this.GB_FlyDest.ResumeLayout(false);
@@ -1171,6 +1291,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.NUD_CastleRankItem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_CastleRankInfo)).EndInit();
             this.TAB_Walker.ResumeLayout(false);
+            this.Tab_Misc.ResumeLayout(false);
+            this.Tab_Poffins.ResumeLayout(false);
+            this.Tab_PokeGear.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1246,5 +1369,16 @@
         private System.Windows.Forms.Label L_CurrentMap;
         private System.Windows.Forms.TabPage TAB_Walker;
         private System.Windows.Forms.Button B_UnlockCourses;
+        private System.Windows.Forms.NumericUpDown NUD_Coin;
+        private System.Windows.Forms.Label L_Coin;
+        private System.Windows.Forms.TabPage Tab_Misc;
+        private System.Windows.Forms.Button B_AllSealsIllegal;
+        private System.Windows.Forms.Button B_AllSealsLegal;
+        private System.Windows.Forms.TabPage Tab_Poffins;
+        private PoffinCase4Editor poffinCase4Editor1;
+        private System.Windows.Forms.TabPage Tab_PokeGear;
+        private PokeGear4Editor pokeGear4Editor1;
+        private System.Windows.Forms.ToolTip tip1;
+        private System.Windows.Forms.ToolTip tip2;
     }
 }

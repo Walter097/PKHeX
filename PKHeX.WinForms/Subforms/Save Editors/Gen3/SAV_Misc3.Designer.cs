@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_Misc3));
             this.B_Save = new System.Windows.Forms.Button();
             this.B_Cancel = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.TAB_Main = new System.Windows.Forms.TabPage();
+            this.L_BPEarned = new System.Windows.Forms.Label();
+            this.NUD_BPEarned = new System.Windows.Forms.NumericUpDown();
             this.GB_TCM = new System.Windows.Forms.GroupBox();
             this.CB_TCM6 = new System.Windows.Forms.ComboBox();
             this.CB_TCM5 = new System.Windows.Forms.ComboBox();
@@ -100,8 +101,15 @@
             this.BTN_SymbolT = new System.Windows.Forms.Button();
             this.BTN_SymbolA = new System.Windows.Forms.Button();
             this.CHK_ActivatePass = new System.Windows.Forms.CheckBox();
+            this.Tab_Records = new System.Windows.Forms.TabPage();
+            this.NUD_RecordValue = new System.Windows.Forms.NumericUpDown();
+            this.CB_Record = new System.Windows.Forms.ComboBox();
+            this.NUD_FameS = new System.Windows.Forms.NumericUpDown();
+            this.NUD_FameM = new System.Windows.Forms.NumericUpDown();
+            this.NUD_FameH = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.TAB_Main.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_BPEarned)).BeginInit();
             this.GB_TCM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_Coins)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_BP)).BeginInit();
@@ -117,12 +125,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.NUD_Stat0)).BeginInit();
             this.GB_FrontierPass.SuspendLayout();
             this.GB_Icons.SuspendLayout();
+            this.Tab_Records.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_RecordValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_FameS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_FameM)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_FameH)).BeginInit();
             this.SuspendLayout();
             // 
             // B_Save
             // 
             this.B_Save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.B_Save.Location = new System.Drawing.Point(213, 262);
+            this.B_Save.Location = new System.Drawing.Point(252, 262);
             this.B_Save.Name = "B_Save";
             this.B_Save.Size = new System.Drawing.Size(75, 23);
             this.B_Save.TabIndex = 73;
@@ -133,7 +146,7 @@
             // B_Cancel
             // 
             this.B_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.B_Cancel.Location = new System.Drawing.Point(132, 262);
+            this.B_Cancel.Location = new System.Drawing.Point(171, 262);
             this.B_Cancel.Name = "B_Cancel";
             this.B_Cancel.Size = new System.Drawing.Size(75, 23);
             this.B_Cancel.TabIndex = 72;
@@ -150,14 +163,17 @@
             this.tabControl1.Controls.Add(this.TAB_Joyful);
             this.tabControl1.Controls.Add(this.TAB_Ferry);
             this.tabControl1.Controls.Add(this.TAB_BF);
+            this.tabControl1.Controls.Add(this.Tab_Records);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(274, 244);
+            this.tabControl1.Size = new System.Drawing.Size(313, 244);
             this.tabControl1.TabIndex = 74;
             // 
             // TAB_Main
             // 
+            this.TAB_Main.Controls.Add(this.L_BPEarned);
+            this.TAB_Main.Controls.Add(this.NUD_BPEarned);
             this.TAB_Main.Controls.Add(this.GB_TCM);
             this.TAB_Main.Controls.Add(this.NUD_Coins);
             this.TAB_Main.Controls.Add(this.L_Coins);
@@ -168,10 +184,36 @@
             this.TAB_Main.Location = new System.Drawing.Point(4, 22);
             this.TAB_Main.Name = "TAB_Main";
             this.TAB_Main.Padding = new System.Windows.Forms.Padding(3);
-            this.TAB_Main.Size = new System.Drawing.Size(266, 218);
+            this.TAB_Main.Size = new System.Drawing.Size(305, 218);
             this.TAB_Main.TabIndex = 0;
             this.TAB_Main.Text = "Main";
             this.TAB_Main.UseVisualStyleBackColor = true;
+            // 
+            // L_BPEarned
+            // 
+            this.L_BPEarned.Location = new System.Drawing.Point(33, 27);
+            this.L_BPEarned.Name = "L_BPEarned";
+            this.L_BPEarned.Size = new System.Drawing.Size(81, 20);
+            this.L_BPEarned.TabIndex = 38;
+            this.L_BPEarned.Text = "Earned BP:";
+            this.L_BPEarned.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // NUD_BPEarned
+            // 
+            this.NUD_BPEarned.Location = new System.Drawing.Point(120, 27);
+            this.NUD_BPEarned.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.NUD_BPEarned.Name = "NUD_BPEarned";
+            this.NUD_BPEarned.Size = new System.Drawing.Size(52, 20);
+            this.NUD_BPEarned.TabIndex = 37;
+            this.NUD_BPEarned.Value = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
             // 
             // GB_TCM
             // 
@@ -244,7 +286,7 @@
             // 
             // NUD_Coins
             // 
-            this.NUD_Coins.Location = new System.Drawing.Point(120, 51);
+            this.NUD_Coins.Location = new System.Drawing.Point(120, 67);
             this.NUD_Coins.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -261,7 +303,7 @@
             // 
             // L_Coins
             // 
-            this.L_Coins.Location = new System.Drawing.Point(33, 49);
+            this.L_Coins.Location = new System.Drawing.Point(33, 65);
             this.L_Coins.Name = "L_Coins";
             this.L_Coins.Size = new System.Drawing.Size(81, 20);
             this.L_Coins.TabIndex = 34;
@@ -271,7 +313,7 @@
             // TB_OTName
             // 
             this.TB_OTName.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TB_OTName.Location = new System.Drawing.Point(120, 77);
+            this.TB_OTName.Location = new System.Drawing.Point(120, 93);
             this.TB_OTName.MaxLength = 7;
             this.TB_OTName.Name = "TB_OTName";
             this.TB_OTName.Size = new System.Drawing.Size(63, 20);
@@ -281,7 +323,7 @@
             // 
             // L_TrainerName
             // 
-            this.L_TrainerName.Location = new System.Drawing.Point(28, 79);
+            this.L_TrainerName.Location = new System.Drawing.Point(28, 95);
             this.L_TrainerName.Name = "L_TrainerName";
             this.L_TrainerName.Size = new System.Drawing.Size(87, 16);
             this.L_TrainerName.TabIndex = 32;
@@ -290,7 +332,7 @@
             // 
             // NUD_BP
             // 
-            this.NUD_BP.Location = new System.Drawing.Point(120, 25);
+            this.NUD_BP.Location = new System.Drawing.Point(120, 6);
             this.NUD_BP.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -307,11 +349,11 @@
             // 
             // L_BP
             // 
-            this.L_BP.Location = new System.Drawing.Point(33, 23);
+            this.L_BP.Location = new System.Drawing.Point(33, 4);
             this.L_BP.Name = "L_BP";
             this.L_BP.Size = new System.Drawing.Size(81, 20);
             this.L_BP.TabIndex = 30;
-            this.L_BP.Text = "BP:";
+            this.L_BP.Text = "Current BP:";
             this.L_BP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // TAB_Joyful
@@ -333,7 +375,7 @@
             this.TAB_Joyful.Location = new System.Drawing.Point(4, 22);
             this.TAB_Joyful.Name = "TAB_Joyful";
             this.TAB_Joyful.Padding = new System.Windows.Forms.Padding(3);
-            this.TAB_Joyful.Size = new System.Drawing.Size(266, 218);
+            this.TAB_Joyful.Size = new System.Drawing.Size(305, 218);
             this.TAB_Joyful.TabIndex = 1;
             this.TAB_Joyful.Text = "Joyful";
             this.TAB_Joyful.UseVisualStyleBackColor = true;
@@ -473,7 +515,7 @@
             this.TAB_Ferry.Location = new System.Drawing.Point(4, 22);
             this.TAB_Ferry.Name = "TAB_Ferry";
             this.TAB_Ferry.Padding = new System.Windows.Forms.Padding(3);
-            this.TAB_Ferry.Size = new System.Drawing.Size(266, 218);
+            this.TAB_Ferry.Size = new System.Drawing.Size(305, 218);
             this.TAB_Ferry.TabIndex = 2;
             this.TAB_Ferry.Text = "Ferry";
             this.TAB_Ferry.UseVisualStyleBackColor = true;
@@ -621,7 +663,7 @@
             this.TAB_BF.Controls.Add(this.GB_FrontierPass);
             this.TAB_BF.Location = new System.Drawing.Point(4, 22);
             this.TAB_BF.Name = "TAB_BF";
-            this.TAB_BF.Size = new System.Drawing.Size(266, 218);
+            this.TAB_BF.Size = new System.Drawing.Size(305, 218);
             this.TAB_BF.TabIndex = 3;
             this.TAB_BF.Text = "Battle Frontier";
             this.TAB_BF.UseVisualStyleBackColor = true;
@@ -932,15 +974,83 @@
             this.CHK_ActivatePass.Text = "Activated";
             this.CHK_ActivatePass.UseVisualStyleBackColor = true;
             // 
+            // Tab_Records
+            // 
+            this.Tab_Records.Controls.Add(this.NUD_FameH);
+            this.Tab_Records.Controls.Add(this.NUD_FameM);
+            this.Tab_Records.Controls.Add(this.NUD_FameS);
+            this.Tab_Records.Controls.Add(this.NUD_RecordValue);
+            this.Tab_Records.Controls.Add(this.CB_Record);
+            this.Tab_Records.Location = new System.Drawing.Point(4, 22);
+            this.Tab_Records.Name = "Tab_Records";
+            this.Tab_Records.Padding = new System.Windows.Forms.Padding(3);
+            this.Tab_Records.Size = new System.Drawing.Size(305, 218);
+            this.Tab_Records.TabIndex = 4;
+            this.Tab_Records.Text = "Records";
+            this.Tab_Records.UseVisualStyleBackColor = true;
+            // 
+            // NUD_RecordValue
+            // 
+            this.NUD_RecordValue.Location = new System.Drawing.Point(74, 33);
+            this.NUD_RecordValue.Name = "NUD_RecordValue";
+            this.NUD_RecordValue.Size = new System.Drawing.Size(120, 20);
+            this.NUD_RecordValue.TabIndex = 1;
+            // 
+            // CB_Record
+            // 
+            this.CB_Record.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CB_Record.FormattingEnabled = true;
+            this.CB_Record.Location = new System.Drawing.Point(6, 6);
+            this.CB_Record.Name = "CB_Record";
+            this.CB_Record.Size = new System.Drawing.Size(188, 21);
+            this.CB_Record.TabIndex = 0;
+            // 
+            // NUD_FameS
+            // 
+            this.NUD_FameS.Location = new System.Drawing.Point(153, 59);
+            this.NUD_FameS.Maximum = new decimal(new int[] {
+            59,
+            0,
+            0,
+            0});
+            this.NUD_FameS.Name = "NUD_FameS";
+            this.NUD_FameS.Size = new System.Drawing.Size(41, 20);
+            this.NUD_FameS.TabIndex = 4;
+            // 
+            // NUD_FameM
+            // 
+            this.NUD_FameM.Location = new System.Drawing.Point(106, 59);
+            this.NUD_FameM.Maximum = new decimal(new int[] {
+            59,
+            0,
+            0,
+            0});
+            this.NUD_FameM.Name = "NUD_FameM";
+            this.NUD_FameM.Size = new System.Drawing.Size(41, 20);
+            this.NUD_FameM.TabIndex = 3;
+            // 
+            // NUD_FameH
+            // 
+            this.NUD_FameH.Location = new System.Drawing.Point(44, 59);
+            this.NUD_FameH.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.NUD_FameH.Name = "NUD_FameH";
+            this.NUD_FameH.Size = new System.Drawing.Size(56, 20);
+            this.NUD_FameH.TabIndex = 2;
+            // 
             // SAV_Misc3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(295, 297);
+            this.ClientSize = new System.Drawing.Size(334, 297);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.B_Save);
             this.Controls.Add(this.B_Cancel);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::PKHeX.WinForms.Properties.Resources.Icon;
+            this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(200, 150);
             this.Name = "SAV_Misc3";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -948,6 +1058,7 @@
             this.tabControl1.ResumeLayout(false);
             this.TAB_Main.ResumeLayout(false);
             this.TAB_Main.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_BPEarned)).EndInit();
             this.GB_TCM.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NUD_Coins)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NUD_BP)).EndInit();
@@ -969,6 +1080,11 @@
             this.GB_FrontierPass.ResumeLayout(false);
             this.GB_FrontierPass.PerformLayout();
             this.GB_Icons.ResumeLayout(false);
+            this.Tab_Records.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_RecordValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_FameS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_FameM)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NUD_FameH)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1045,5 +1161,13 @@
         private System.Windows.Forms.ComboBox CB_TCM3;
         private System.Windows.Forms.ComboBox CB_TCM2;
         private System.Windows.Forms.ComboBox CB_TCM1;
+        private System.Windows.Forms.TabPage Tab_Records;
+        private System.Windows.Forms.NumericUpDown NUD_RecordValue;
+        private System.Windows.Forms.ComboBox CB_Record;
+        private System.Windows.Forms.Label L_BPEarned;
+        private System.Windows.Forms.NumericUpDown NUD_BPEarned;
+        private System.Windows.Forms.NumericUpDown NUD_FameH;
+        private System.Windows.Forms.NumericUpDown NUD_FameM;
+        private System.Windows.Forms.NumericUpDown NUD_FameS;
     }
 }

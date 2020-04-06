@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Linq;
 
 namespace PKHeX.Core
 {
-    public class PersonalInfoG4 : PersonalInfoG3
+    /// <summary>
+    /// <see cref="PersonalInfo"/> class with values from Generation 4 games.
+    /// </summary>
+    public sealed class PersonalInfoG4 : PersonalInfoG3
     {
         public new const int SIZE = 0x2C;
-        public PersonalInfoG4(byte[] data)
-        {
-            if (data.Length != SIZE)
-                return;
-            Data = data;
 
+        public PersonalInfoG4(byte[] data) : base(data)
+        {
             // Unpack TMHM & Tutors
-            TMHM = GetBits(Data.Skip(0x1C).Take(0x0D).ToArray());
-            TypeTutors = new bool[0]; // not stored in personal
+            TMHM = GetBits(Data, 0x1C, 0x0D);
+            TypeTutors = Array.Empty<bool>(); // not stored in personal
         }
+
         public override byte[] Write()
         {
-            SetBits(TMHM).CopyTo(Data, 0x28);
-            // setBits(TypeTutors).CopyTo(Data, 0x38);
+            SetBits(TMHM).CopyTo(Data, 0x1C);
             return Data;
         }
 
