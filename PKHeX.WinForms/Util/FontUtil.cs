@@ -1,53 +1,86 @@
-﻿using System;
+using PKHeX.Core;
+using PKHeX.WinForms.Properties;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Runtime.InteropServices;
-using PKHeX.WinForms.Properties;
+using System.IO;
 
-namespace PKHeX.WinForms
+namespace PKHeX.WinForms;
+
+/// <summary>
+/// Font cache for in-game character rendering.
+/// The font is only loaded once per context/size combination.
+/// </summary>
+public static class FontUtil
 {
-    public static class FontUtil
+    private static readonly PrivateFontCollection CustomFonts = new();
+    private static readonly Dictionary<(string FamilyName, float Size), Font> GeneratedFonts = [];
+    private static readonly Dictionary<string, FontFamily> RegisteredFamilies = [];
+
+    public const EntityContext DefaultContext = EntityContext.Gen6;
+
+    public static Font GetFont(EntityContext context = DefaultContext)
     {
+        var (familyName, resourceName, size) = GetFontFileName(context);
 
-        // Font Related
-#if WINDOWS
-        [DllImport("gdi32.dll")]
-        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
-#endif
+        // Check if we've already instantiated this font already.
+        var fetch = (FontName: familyName, size);
+        if (GeneratedFonts.TryGetValue(fetch, out var f))
+            return f;
 
-        private static readonly PrivateFontCollection s_FontCollection = new PrivateFontCollection();
-        private static FontFamily[] FontFamilies
+        var family = RegisterFamily(familyName, resourceName);
+        var font = new Font(family, size, FontStyle.Regular, GraphicsUnit.Point);
+        GeneratedFonts.Add((family.Name, size), font);
+        return font;
+    }
+
+    private static FontFamily RegisterFamily(string familyName, string resourceName)
+    {
+        // If already populated for this context, return that rather than fetching again.
+        if (RegisteredFamilies.TryGetValue(familyName, out var family))
+            return family;
+
+        // Might not have a font for every context; may be mapped to the same as another context.
+        var resource = Resources.ResourceManager.GetObject(resourceName);
+        if (resource is not byte[] fontBytes)
+            throw new InvalidOperationException($"Font resource '{resourceName}' not found.");
+
+        var path = Path.Combine(Path.GetTempPath(), $"{resourceName}.bin");
+        if (!File.Exists(path))
+            File.WriteAllBytes(path, fontBytes);
+        AddFont(path);
+
+        // doesn't return the family reference; grab it now
+        var loaded = Array.Find(CustomFonts.Families, z => z.Name == familyName)
+         ?? throw new InvalidOperationException($"Font family '{familyName}' not found in custom fonts.");
+
+        return RegisteredFamilies[familyName] = loaded;
+    }
+
+    // declare fonts here; any not present will fall back to Gen6.
+    private static (string FamilyName, string ResourceName, float Size) GetFontFileName(EntityContext context) => context switch
+    {
+        // Internal name, program resource name, scaling to make it look OK in GUI.
+        _ => ("PGLDings", "pgldings_normalregular", 13f), // Gen6
+    };
+
+    private static void AddFont(string path)
+    {
+        try
         {
-            get
-            {
-                if (s_FontCollection.Families.Length == 0) SetPKXFont();
-                return s_FontCollection.Families;
-            }
+            if (!File.Exists(path))
+                File.WriteAllBytes(path, Resources.pgldings_normalregular);
+            CustomFonts.AddFontFile(path);
         }
-        public static Font GetPKXFont(float size)
+        catch (FileNotFoundException ex)
         {
-            return new Font(FontFamilies[0], size);
+            Debug.WriteLine($"Unable to read font file: {ex.Message}");
         }
-        private static void SetPKXFont()
+        catch (Exception ex)
         {
-            try
-            {
-                byte[] fontData = Resources.pgldings_normalregular;
-#if WINDOWS
-                IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
-                Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
-                s_FontCollection.AddMemoryFont(fontPtr, Resources.pgldings_normalregular.Length); uint dummy = 0;
-                AddFontMemResourceEx(fontPtr, (uint)Resources.pgldings_normalregular.Length, IntPtr.Zero, ref dummy);
-                Marshal.FreeCoTaskMem(fontPtr);
-#else
-                GCHandle fontHandle = GCHandle.Alloc(fontData, GCHandleType.Pinned);
- 				s_FontCollection.AddMemoryFont(fontHandle.AddrOfPinnedObject(), fontData.Length);
- 				fontHandle.Free();
-#endif
-
-            }
-            catch (Exception ex) { Debug.WriteLine($"Unable to add ingame font: {ex.Message}"); }
+            Debug.WriteLine($"Unable to add in-game font: {ex.Message}");
         }
     }
 }

@@ -1,97 +1,101 @@
-﻿namespace PKHeX.Core
+namespace PKHeX.Core;
+
+/// <summary>
+/// Stat/misc data for individual species or their associated alternate form data.
+/// </summary>
+public abstract class PersonalInfo : IPersonalInfo
 {
-    public abstract class PersonalInfo
+    public abstract byte[] Write();
+    public abstract int HP { get; set; }
+    public abstract int ATK { get; set; }
+    public abstract int DEF { get; set; }
+    public abstract int SPE { get; set; }
+    public abstract int SPA { get; set; }
+    public abstract int SPD { get; set; }
+    public abstract int EV_HP { get; set; }
+    public abstract int EV_ATK { get; set; }
+    public abstract int EV_DEF { get; set; }
+    public abstract int EV_SPE { get; set; }
+    public abstract int EV_SPA { get; set; }
+    public abstract int EV_SPD { get; set; }
+    public abstract byte Type1 { get; set; }
+    public abstract byte Type2 { get; set; }
+    public abstract int EggGroup1 { get; set; }
+    public abstract int EggGroup2 { get; set; }
+    public abstract byte CatchRate { get; set; }
+    public virtual int EvoStage { get; set; }
+    public abstract byte Gender { get; set; }
+    public abstract byte HatchCycles { get; set; }
+    public abstract byte BaseFriendship { get; set; }
+    public abstract byte EXPGrowth { get; set; }
+    public abstract int GetIndexOfAbility(int abilityID);
+    public abstract int GetAbilityAtIndex(int abilityIndex);
+    public abstract int AbilityCount { get; }
+    public abstract int EscapeRate { get; set; }
+    public virtual byte FormCount { get => 1; set { } }
+    public virtual int FormStatsIndex { get; set; }
+    public abstract int BaseEXP { get; set; }
+    public abstract int Color { get; set; }
+    public virtual int Height { get; set; }
+    public virtual int Weight { get; set; }
+
+    public int FormIndex(ushort species, byte form)
     {
-        protected byte[] Data;
-        public abstract byte[] Write();
-        public abstract int HP { get; set; }
-        public abstract int ATK { get; set; }
-        public abstract int DEF { get; set; }
-        public abstract int SPE { get; set; }
-        public abstract int SPA { get; set; }
-        public abstract int SPD { get; set; }
-
-        public int[] Stats => new[] { HP, ATK, DEF, SPE, SPA, SPD };
-
-        public abstract int EV_HP { get; set; }
-        public abstract int EV_ATK { get; set; }
-        public abstract int EV_DEF { get; set; }
-        public abstract int EV_SPE { get; set; }
-        public abstract int EV_SPA { get; set; }
-        public abstract int EV_SPD { get; set; }
-
-        public abstract int[] Types { get; set; }
-        public abstract int CatchRate { get; set; }
-        public virtual int EvoStage { get; set; }
-        public abstract int[] Items { get; set; }
-        public abstract int Gender { get; set; }
-        public abstract int HatchCycles { get; set; }
-        public abstract int BaseFriendship { get; set; }
-        public abstract int EXPGrowth { get; set; }
-        public abstract int[] EggGroups { get; set; }
-        public abstract int [] Abilities { get; set; }
-        public abstract int EscapeRate { get; set; }
-        public virtual int FormeCount { get; set; }
-        protected internal virtual int FormStatsIndex { get; set; }
-        public virtual int FormeSprite { get; set; }
-        public abstract int BaseEXP { get; set; }
-        public abstract int Color { get; set; }
-
-        public virtual int Height { get; set; } = 0;
-        public virtual int Weight { get; set; } = 0;
-
-        public bool[] TMHM { get; protected set; }
-        public bool[] TypeTutors { get; protected set; }
-        public bool[][] SpecialTutors { get; protected set; } = new bool[0][];
-
-        protected static bool[] GetBits(byte[] data)
-        {
-            bool[] r = new bool[data.Length<<3];
-            for (int i = 0; i < r.Length; i++)
-                r[i] = (data[i>>3] >> (i&7) & 0x1) == 1;
-            return r;
-        }
-        protected static byte[] SetBits(bool[] bits)
-        {
-            byte[] data = new byte[bits.Length>>3];
-            for (int i = 0; i < bits.Length; i++)
-                data[i>>3] |= (byte)(bits[i] ? 1 << (i&0x7) : 0);
-            return data;
-        }
-
-        public void AddTMHM(byte[] data) => TMHM = GetBits(data);
-        public void AddTypeTutors(byte[] data) => TypeTutors = GetBits(data);
-
-        // Data Manipulation
-        public int FormeIndex(int species, int forme)
-        {
-            if (forme <= 0) // no forme requested
-                return species;
-            if (FormStatsIndex <= 0) // no formes present
-                return species;
-            if (forme > FormeCount) // beyond range of species' formes
-                return species;
-
-            return FormStatsIndex + forme - 1;
-        }
-        public int RandomGender
-        {
-            get
-            {
-                switch (Gender)
-                {
-                    case 255: // Genderless
-                        return 2;
-                    case 254: // Female
-                        return 1;
-                    case 0: // Male
-                        return 0;
-                    default:
-                        return (int)(Util.Rand32() % 2);
-                }
-            }
-        }
-        public bool HasFormes => FormeCount > 1;
-        public int BST => HP + ATK + DEF + SPE + SPA + SPD;
+        if (!HasForm(form))
+            return species;
+        return FormStatsIndex + form - 1;
     }
+
+    public bool HasForm(byte form)
+    {
+        if (form == 0) // no form requested
+            return false;
+        if (FormStatsIndex <= 0) // no forms present
+            return false;
+        if (form >= FormCount) // beyond range of species' forms
+            return false;
+        return true;
+    }
+
+    public const byte RatioMagicGenderless = 255;
+    public const byte RatioMagicFemale = 254;
+    public const byte RatioMagicMale = 0;
+
+    public static bool IsSingleGender(byte gt) => gt - 1u >= 253;
+
+    public bool IsDualGender => Gender - 1u < 253;
+    public bool Genderless => Gender == RatioMagicGenderless;
+    public bool OnlyFemale => Gender == RatioMagicFemale;
+    public bool OnlyMale => Gender == RatioMagicMale;
+
+    public bool HasForms => FormCount > 1;
+
+    /// <summary>
+    /// Checks to see if the <see cref="PKM.Form"/> is valid within the <see cref="FormCount"/>
+    /// </summary>
+    public bool IsFormWithinRange(byte form)
+    {
+        if (form == 0)
+            return true;
+        return form < FormCount;
+    }
+
+    /// <summary>
+    /// Gets the span of values for a given Gender
+    /// </summary>
+    /// <param name="gender">Gender</param>
+    /// <param name="ratio">Gender Ratio</param>
+    /// <returns>Returns the maximum or minimum gender value that corresponds to the input gender ratio.</returns>
+    public static (byte Min, byte Max) GetGenderMinMax(byte gender, byte ratio) => ratio switch
+    {
+        RatioMagicMale => (0, 255),
+        RatioMagicFemale => (0, 255),
+        RatioMagicGenderless => (0, 255),
+        _ => gender switch
+        {
+            0 => (ratio, 255), // male
+            1 => (0, --ratio), // female
+            _ => (0, 255),
+        },
+    };
 }

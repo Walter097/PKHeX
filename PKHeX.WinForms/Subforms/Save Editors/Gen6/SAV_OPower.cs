@@ -1,156 +1,92 @@
-﻿using System;
-using System.Linq;
+using System;
 using System.Windows.Forms;
 using PKHeX.Core;
 
-namespace PKHeX.WinForms
+namespace PKHeX.WinForms;
+
+public partial class SAV_OPower : Form
 {
-    public partial class SAV_OPower : Form
+    private readonly SaveFile Origin;
+    private readonly SaveFile SAV;
+    private readonly OPower6 Block;
+
+    private readonly NumericUpDown[] NUDField_A;
+    private readonly NumericUpDown[] NUDField_B;
+    private readonly NumericUpDown[] NUDBattle_A;
+    private readonly NumericUpDown[] NUDBattle_B;
+
+    public SAV_OPower(ISaveBlock6Main sav)
     {
-        private readonly SaveFile Origin;
-        private readonly SAV6 SAV;
-        public SAV_OPower(SaveFile sav)
+        InitializeComponent();
+        WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
+        Origin = (SaveFile)sav;
+        SAV = Origin.Clone();
+        Block = ((ISaveBlock6Main)SAV).OPower;
+
+        Label[] LabelField = [L_F0, L_F1, L_F2, L_F3, L_F4, L_F5, L_F6, L_F7, L_F8, L_F9];
+        Label[] LabelBattle = [L_B0, L_B1, L_B2, L_B3, L_B4, L_B5, L_B6];
+        NUDField_A = [NUD_F0A, NUD_F1A, NUD_F2A, NUD_F3A, NUD_F4A, NUD_F5A, NUD_F6A, NUD_F7A, NUD_F8A, NUD_F9A];
+        NUDField_B = [NUD_F0B, NUD_F1B, NUD_F2B, NUD_F3B, NUD_F4B, NUD_F5B, NUD_F6B, NUD_F7B, NUD_F8B, NUD_F9B];
+        NUDBattle_A = [NUD_B0A, NUD_B1A, NUD_B2A, NUD_B3A, NUD_B4A, NUD_B5A, NUD_B6A];
+        NUDBattle_B = [NUD_B0B, NUD_B1B, NUD_B2B, NUD_B3B, NUD_B4B, NUD_B5B, NUD_B6B];
+
+        // get names, without the "Count" enum value at the end.
+        var nameIndex = WinFormsTranslator.GetEnumTranslation<OPower6Index>(Main.CurrentLanguage).AsSpan()[..^1];
+        var nameField = WinFormsTranslator.GetEnumTranslation<OPower6FieldType>(Main.CurrentLanguage).AsSpan()[..^1];
+        var nameBattle = WinFormsTranslator.GetEnumTranslation<OPower6BattleType>(Main.CurrentLanguage).AsSpan()[..^1];
+        foreach (string index in nameIndex)
+            CLB_Unlock.Items.Add(index);
+        for (int i = 0; i < nameField.Length; i++)
+            LabelField[i].Text = nameField[i];
+        for (int i = 0; i < nameBattle.Length; i++)
+            LabelBattle[i].Text = nameBattle[i];
+
+        LoadCurrent();
+
+        B_ClearAll.Click += (_, _) => { Block.ClearAll(); LoadCurrent(); };
+        B_GiveAll.Click += (_, _) => { Block.UnlockAll(); LoadCurrent(); };
+    }
+
+    private void B_Cancel_Click(object sender, EventArgs e) => Close();
+
+    private void B_Save_Click(object sender, EventArgs e)
+    {
+        SaveCurrent();
+        Origin.CopyChangesFrom(SAV);
+        Close();
+    }
+
+    private void LoadCurrent()
+    {
+        for (int i = 0; i < CLB_Unlock.Items.Count; i++)
+            CLB_Unlock.SetItemChecked(i, Block.GetState((OPower6Index)i) == OPowerFlagState.Unlocked);
+        for (int i = 0; i < NUDField_A.Length; i++)
         {
-            SAV = (SAV6)(Origin = sav).Clone();
-            InitializeComponent();
-            WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
-            LoadData();
+            NUDField_A[i].Value = Block.GetLevel1((OPower6FieldType)i);
+            NUDField_B[i].Value = Block.GetLevel2((OPower6FieldType)i);
         }
-
-        private void B_Cancel_Click(object sender, EventArgs e)
+        for (int i = 0; i < NUDBattle_A.Length; i++)
         {
-            Close();
+            NUDBattle_A[i].Value = Block.GetLevel1((OPower6BattleType)i);
+            NUDBattle_B[i].Value = Block.GetLevel2((OPower6BattleType)i);
         }
-        private void B_Save_Click(object sender, EventArgs e)
+        NUD_Points.Value = Block.Points;
+    }
+
+    private void SaveCurrent()
+    {
+        for (int i = 0; i < CLB_Unlock.Items.Count; i++)
+            Block.SetState((OPower6Index)i, CLB_Unlock.GetItemChecked(i) ? OPowerFlagState.Unlocked : OPowerFlagState.Locked);
+        for (int i = 0; i < NUDField_A.Length; i++)
         {
-            SaveData();
-            Close();
+            Block.SetLevel1((OPower6FieldType)i, (byte)NUDField_A[i].Value);
+            Block.SetLevel2((OPower6FieldType)i, (byte)NUDField_B[i].Value);
         }
-        private void LoadData()
+        for (int i = 0; i < NUDBattle_A.Length; i++)
         {
-            int o = SAV.OPower;
-
-            // Fill up the 17 o-powers
-            // 1 2 3 4 5 10 use 4 bytes, everything else uses 3
-            o++; // Skip first 0
-            CB_1.SelectedIndex = GetIndex(o, 4); o += 4; o++; // @ 1
-            CB_2.SelectedIndex = GetIndex(o, 4); o += 4; o++; // @ 6
-            CB_3.SelectedIndex = GetIndex(o, 4); o += 4; o++; // @ B
-            CB_4.SelectedIndex = GetIndex(o, 4); o += 4; o++; // @ 10
-            CB_5.SelectedIndex = GetIndex(o, 4); o += 4; o++; // @ 15
-
-            CB_6.SelectedIndex = GetIndex(o, 3); o += 3; // 1A
-            CB_7.SelectedIndex = GetIndex(o, 3); o += 3; // 1D
-            CB_8.SelectedIndex = GetIndex(o, 3); o += 3; // 20
-            CB_9.SelectedIndex = GetIndex(o, 3); o += 3; // 23
-
-            o++;
-            CB_10.SelectedIndex = GetIndex(o, 4); o += 4; o++; // @ 27-
-
-            CB_11.SelectedIndex = GetIndex(o, 3); o += 3; // 2C-2E
-            CB_12.SelectedIndex = GetIndex(o, 3); o += 3; // 2F-31
-            CB_13.SelectedIndex = GetIndex(o, 3); o += 3; // 32-34
-            CB_14.SelectedIndex = GetIndex(o, 3); o += 3; // 35-37
-            CB_15.SelectedIndex = GetIndex(o, 3); o += 3; // 38-3A
-            CB_16.SelectedIndex = GetIndex(o, 3); o += 3; // 3B-3D
-            CB_17.SelectedIndex = GetIndex(o, 3);//o += 3; // 3E-40
-
-            // Load Maxes
-            o = SAV.OPower;
-            CHK_1.Checked = Convert.ToBoolean(SAV.Data[o + 0x00]);
-            CHK_2.Checked = Convert.ToBoolean(SAV.Data[o + 0x05]);
-            CHK_3.Checked = Convert.ToBoolean(SAV.Data[o + 0x0A]);
-            CHK_4.Checked = Convert.ToBoolean(SAV.Data[o + 0x0F]);
-            CHK_5.Checked = Convert.ToBoolean(SAV.Data[o + 0x14]);
-            CHK_6.Checked = Convert.ToBoolean(SAV.Data[o + 0x19]);
-            CHK_7.Checked = Convert.ToBoolean(SAV.Data[o + 0x26]);
-            CHK_8.Checked = Convert.ToBoolean(SAV.Data[o + 0x2B]);
+            Block.SetLevel1((OPower6BattleType)i, (byte)NUDBattle_A[i].Value);
+            Block.SetLevel2((OPower6BattleType)i, (byte)NUDBattle_B[i].Value);
         }
-        private void SaveData()
-        {
-            ComboBox[] cba =
-            {
-                CB_1, CB_2, CB_3, CB_4, CB_5, CB_6, CB_7, CB_8, CB_9,
-                CB_10, CB_11, CB_12, CB_13, CB_14, CB_15, CB_16, CB_17,
-            };
-            int[] offsets =
-            {
-                1,6,0xB,0x10,0x15,
-                0x1A,0x1D,0x20,0x23,
-                0x27,
-                0x2C,0x2F,0x32,0x35,0x38,0x3B,0x3E,
-            };
-            int o = SAV.OPower; // offset
-
-            for (int i = 0; i < cba.Length; i++)
-            {
-                byte[] data = new byte[cba[i].Items.Count - 1];
-                for (int c = 0; c < cba[i].SelectedIndex; c++)
-                {
-                    data[c] = 1;
-                }
-                Array.Copy(data, 0, SAV.Data, o + offsets[i], data.Length);
-            }
-
-            // Save Maxes
-
-            SAV.Data[o + 0x00] = Convert.ToByte(CHK_1.Checked);
-            SAV.Data[o + 0x05] = Convert.ToByte(CHK_2.Checked);
-            SAV.Data[o + 0x0A] = Convert.ToByte(CHK_3.Checked);
-            SAV.Data[o + 0x0F] = Convert.ToByte(CHK_4.Checked);
-            SAV.Data[o + 0x14] = Convert.ToByte(CHK_5.Checked);
-            SAV.Data[o + 0x19] = Convert.ToByte(CHK_6.Checked);
-            SAV.Data[o + 0x26] = Convert.ToByte(CHK_7.Checked);
-            SAV.Data[o + 0x2B] = Convert.ToByte(CHK_8.Checked);
-            Origin.SetData(SAV.Data, 0);
-        }
-        private int GetIndex(int o, int l)
-        {
-            byte[] _0 = { 00, 00, 00, 00, };
-            byte[] _1 = { 01, 00, 00, 00, };
-            byte[] _2 = { 01, 01, 00, 00, };
-            byte[] _3 = { 01, 01, 01, 00, };
-            byte[] _4 = { 01, 01, 01, 01, };
-            
-            byte[] data = new byte[4];
-            Array.Copy(SAV.Data, o, data, 0, l);
-
-            if (data.SequenceEqual(_4)) return 4;
-            if (data.SequenceEqual(_3)) return 3;
-            if (data.SequenceEqual(_2)) return 2;
-            if (data.SequenceEqual(_1)) return 1;
-            return data.SequenceEqual(_0) ? 0 : 1;
-        }
-        private void B_AllMax_Click(object sender, EventArgs e)
-        {
-            SetAllMax(false);
-        }
-        private void B_MaxP_Click(object sender, EventArgs e)
-        {
-            SetAllMax(true);
-        }
-        private void SetAllMax(bool max)
-        {
-            ComboBox[] cba =
-            {
-                CB_1, CB_2, CB_3, CB_4, CB_5, CB_6, CB_7, CB_8, CB_9,
-                CB_10, CB_11, CB_12, CB_13, CB_14, CB_15, CB_16, CB_17,
-            };
-            CheckBox[] echk = { CHK_1, CHK_2, CHK_3, CHK_4, CHK_5, CHK_6, CHK_7, CHK_8 };
-            
-            foreach (ComboBox t in cba)
-                t.SelectedIndex = t.Items.Count-1;
-
-            if (!max)
-                foreach (CheckBox t in echk)
-                    t.Checked = ModifierKeys != Keys.Control;
-            else if (ModifierKeys == Keys.Control)
-            {
-                foreach (ComboBox t in cba)
-                    t.SelectedIndex = 0;
-                foreach (CheckBox t in echk)
-                    t.Checked = false;
-            }
-        }
+        Block.Points = (byte)NUD_Points.Value;
     }
 }

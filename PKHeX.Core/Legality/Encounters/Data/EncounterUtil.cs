@@ -1,173 +1,226 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
-namespace PKHeX.Core
+namespace PKHeX.Core;
+
+/// <summary>
+/// Miscellaneous setup utility for legality checking <see cref="IEncounterTemplate"/> data sources.
+/// </summary>
+public static class EncounterUtil
 {
+    /// <summary> Magic value to indicate the form is dynamic and should not be used literally. </summary>
+    public const byte FormDynamic = FormVivillon;
+    /// <summary> Magic value to indicate the form is set by the save file and can be one of many within the permitted range. </summary>
+    public const byte FormVivillon = 30;
+    /// <summary> Magic value to indicate the form is random and can be one of many within the permitted range. </summary>
+    public const byte FormRandom = 31;
+
     /// <summary>
-    /// Miscellaneous setup utility for legality checking <see cref="IEncounterable"/> data sources.
+    /// Gets a raw chunk of data from the specified resource.
     /// </summary>
-    internal static class EncounterUtil
+    public static ReadOnlySpan<byte> Get([ConstantExpected] string resource)
+        => Util.GetBinaryResource($"encounter_{resource}.pkl");
+
+    /// <summary>
+    /// Gets an index-able accessor for the specified resource.
+    /// </summary>
+    public static BinLinkerAccessor Get([ConstantExpected] string resource, [Length(2, 2)] ReadOnlySpan<byte> ident)
+        => BinLinkerAccessor.Get(Get(resource), ident);
+
+    /// <summary>
+    /// Gets an index-able accessor for the specified resource.
+    /// </summary>
+    public static BinLinkerAccessor16 Get16([ConstantExpected] string resource, [Length(2, 2)] ReadOnlySpan<byte> ident)
+        => BinLinkerAccessor16.Get(Get(resource), ident);
+
+    /// <summary>
+    /// Retrieves the localization index list for all requested strings for the <see cref="fileName"/>.
+    /// </summary>
+    /// <param name="fileName">Base file name</param>
+    /// <param name="maxLanguage">Max language ID (inclusive)</param>
+    /// <remarks>Ignores Korean Language.</remarks>
+    public static string[][] GetLanguageStrings([ConstantExpected] string fileName, [ConstantExpected(Min = 6)] int maxLanguage)
     {
-        /// <summary>
-        /// Gets the relevant <see cref="EncounterStatic"/> objects that appear in the relevant game.
-        /// </summary>
-        /// <param name="source">Table of valid encounters that appear for the game pairing</param>
-        /// <param name="game">Game to filter for</param>
-        /// <returns>Array of encounter objects that are encounterable on the input game</returns>
-        internal static EncounterStatic[] GetStaticEncounters(IEnumerable<EncounterStatic> source, GameVersion game)
-        {
-            return source.Where(s => s.Version.Contains(game)).ToArray();
-        }
+        var result = new string[maxLanguage + 1][];
+        result[0] = result[6] = []; // 0 - None, 6 - None
+        for (int i = 1; i <= 5; i++)
+            result[i] = Text(fileName, i);
+        for (int i = 7; i <= maxLanguage; i++)
+            result[i] = Text(fileName, i);
+        return result;
 
-        /// <summary>
-        /// Gets the <see cref="EncounterArea"/> data for the input game via the program's resource streams.
-        /// </summary>
-        /// <param name="game">Game to fetch for</param>
-        /// <remarks> <see cref="EncounterSlot.SlotNumber"/> data is not marked, as the RNG seed is 64 bits (permitting sufficient randomness).</remarks>
-        /// <returns>Array of areas that are encounterable on the input game.</returns>
-        internal static EncounterArea[] GetEncounterTables(GameVersion game)
-        {
-            switch (game)
-            {
-                case GameVersion.B:  return GetEncounterTables("51", "b");
-                case GameVersion.W:  return GetEncounterTables("51", "w");
-                case GameVersion.B2: return GetEncounterTables("52", "b2");
-                case GameVersion.W2: return GetEncounterTables("52", "w2");
-                case GameVersion.X:  return GetEncounterTables("xy", "x");
-                case GameVersion.Y:  return GetEncounterTables("xy", "y");
-                case GameVersion.AS: return GetEncounterTables("ao", "a");
-                case GameVersion.OR: return GetEncounterTables("ao", "o");
-                case GameVersion.SN: return GetEncounterTables("sm", "sn");
-                case GameVersion.MN: return GetEncounterTables("sm", "mn");
-                case GameVersion.US: return GetEncounterTables("uu", "us");
-                case GameVersion.UM: return GetEncounterTables("uu", "um");
-            }
-            return null; // bad request
-        }
+        static string[] Text([ConstantExpected] string fileName, int language)
+            => Util.GetStringList(fileName, ((LanguageID)language).GetLanguageCode());
+    }
 
-        /// <summary>
-        /// Direct fetch for <see cref="EncounterArea"/> data; can also be used to fetch supplementary encounter streams.
-        /// </summary>
-        /// <param name="ident">Unpacking identification ASCII characters (first two bytes of binary)</param>
-        /// <param name="resource">Resource name (will be prefixed with "encounter_"</param>
-        /// <returns>Array of encounter areas</returns>
-        internal static EncounterArea[] GetEncounterTables(string ident, string resource)
+    /// <summary>
+    /// Grabs the localized names for individual templates for all languages from the specified <see cref="index"/> of the <see cref="names"/> list.
+    /// </summary>
+    /// <param name="names">Arrays of strings grouped by language</param>
+    /// <param name="index">Index to grab from the language arrays</param>
+    /// <returns>Row of localized strings for the template.</returns>
+    public static string[] GetNamesForLanguage(ReadOnlySpan<string[]> names, uint index)
+    {
+        var result = new string[names.Length];
+        for (int i = 0; i < result.Length; i++)
         {
-            byte[] mini = Util.GetBinaryResource($"encounter_{resource}.pkl");
-            return EncounterArea.GetArray(Data.UnpackMini(mini, ident));
+            var arr = names[i];
+            result[i] = index < arr.Length ? arr[index] : string.Empty;
         }
+        return result;
+    }
 
-        /// <summary>
-        /// Combines <see cref="EncounterArea"/> slot arrays with the same <see cref="EncounterArea.Location"/>.
-        /// </summary>
-        /// <param name="tables">Input encounter areas to combine</param>
-        /// <returns>Combined Array of encounter areas. No duplicate location IDs will be present.</returns>
-        internal static EncounterArea[] AddExtraTableSlots(params EncounterArea[][] tables)
-        {
-            return tables.SelectMany(s => s).GroupBy(l => l.Location)
-                .Select(t => t.Count() == 1
-                    ? t.First() // only one table, just return the area
-                    : new EncounterArea { Location = t.First().Location, Slots = t.SelectMany(s => s.Slots).ToArray() })
-                .ToArray();
-        }
+    /// <summary>
+    /// Applies the encounter moves for the given level and version to the provided PKM.
+    /// </summary>
+    /// <typeparam name="T">Entity type</typeparam>
+    /// <param name="pk">Entity to apply the moves to</param>
+    /// <param name="version">Version to apply the moves from</param>
+    /// <param name="level">Level to apply the moves at</param>
+    public static void SetEncounterMoves<T>(T pk, GameVersion version, byte level) where T : PKM
+    {
+        var source = GameData.GetLearnSource(version);
+        SetEncounterMoves(pk, source, level);
+    }
 
-        /// <summary>
-        /// Marks Encounter Slots for party lead's ability slot influencing.
-        /// </summary>
-        /// <remarks>Magnet Pull attracts Steel type slots, and Static attracts Electric</remarks>
-        /// <param name="Areas">Encounter Area array for game</param>
-        /// <param name="t">Personal data for use with a given species' type</param>
-        internal static void MarkEncountersStaticMagnetPull(ref EncounterArea[] Areas, PersonalTable t)
-        {
-            const int steel = 8;
-            const int electric = 12;
-            foreach (EncounterArea Area in Areas)
-            {
-                var s = new List<EncounterSlot>(); // Static
-                var m = new List<EncounterSlot>(); // Magnet Pull
-                foreach (EncounterSlot Slot in Area.Slots)
-                {
-                    var types = t[Slot.Species].Types;
-                    if (types[0] == steel || types[1] == steel)
-                        m.Add(Slot);
-                    if (types[0] == electric || types[1] == electric)
-                        s.Add(Slot);
-                }
-                foreach (var slot in s)
-                {
-                    slot.Permissions.Static = true;
-                    slot.Permissions.StaticCount = s.Count;
-                }
-                foreach (var slot in m)
-                {
-                    slot.Permissions.MagnetPull = true;
-                    slot.Permissions.MagnetPullCount = s.Count;
-                }
-            }
-        }
+    private static void SetEncounterMoves<TEntity, TSource>(TEntity pk, TSource source, byte level)
+        where TEntity : PKM
+        where TSource : ILearnSource
+    {
+        Span<ushort> moves = stackalloc ushort[4];
+        source.SetEncounterMoves(pk.Species, pk.Form, level, moves);
+        pk.SetMoves(moves);
+    }
 
-        /// <summary>
-        /// Sets the <see cref="EncounterStatic.Generation"/> value, for use in determining split-generation origins.
-        /// </summary>
-        /// <remarks>Only used for Gen 1 & 2, as <see cref="PKM.Version"/> data is not present.</remarks>
-        /// <param name="Encounters">Ingame encounter data</param>
-        /// <param name="Generation">Generation number to set</param>
-        internal static void MarkEncountersGeneration(IEnumerable<EncounterStatic> Encounters, int Generation)
-        {
-            foreach (EncounterStatic Encounter in Encounters)
-                Encounter.Generation = Generation;
-        }
+    /// <summary>
+    /// Gets a Generation 1-3 trainer name ensuring each character is present in the game's available character set.
+    /// </summary>
+    /// <remarks>Only falls back to a valid Name if the language is incompatible with the trainer's language. Doesn't sanity check otherwise.</remarks>
+    /// <param name="tr">Trainer to apply the name from</param>
+    /// <param name="lang">Language to apply the name in</param>
+    public static string GetTrainerName(ITrainerInfo tr, int lang) => lang switch
+    {
+        (int)LanguageID.Japanese => tr.Language == 1 ? tr.OT : TrainerName.GameFreakJPN,
+        _ => tr.Language == 1 ? TrainerName.GameFreakINT : tr.OT,
+    };
 
-        /// <summary>
-        /// Sets the <see cref="EncounterSlot1.Version"/> value, for use in determining split-generation origins.
-        /// </summary>
-        /// <remarks>Only used for Gen 1 & 2, as <see cref="PKM.Version"/> data is not present.</remarks>
-        /// <param name="Areas">Ingame encounter data</param>
-        /// <param name="Version">Version ID to set</param>
-        internal static void MarkEncountersVersion(IEnumerable<EncounterArea> Areas, GameVersion Version)
+    /// <summary>
+    /// Gets a random DV16 value.
+    /// </summary>
+    /// <param name="rand">Random number generator to use</param>
+    /// <param name="isShiny">Optional Shiny flag to match</param>
+    /// <param name="type">Optional Hidden Power type to match</param>
+    /// <returns>Value between 0 and 65535 (inclusive)</returns>
+    public static ushort GetRandomDVs(Random rand, bool isShiny, sbyte type)
+    {
+        if (isShiny)
         {
-            foreach (EncounterArea Area in Areas)
-            foreach (var Slot in Area.Slots.OfType<EncounterSlot1>())
-                Slot.Version = Version;
+            // If the DVs can be Shiny as well as match the Hidden Power type, return the Shiny DVs.
+            const ushort dv16 = 0x2AAA;
+            var modified = HiddenPower.SetTypeGB(type, dv16);
+            if (ShinyUtil.GetIsShinyGB(modified))
+                return modified;
+            // Fallback to a random DV if the Shiny DVs don't match the Hidden Power type.
+            // Requesting Hidden Power is more relevant for battle legality.
         }
+        var result = (ushort)rand.Next(ushort.MaxValue + 1);
+        if (HiddenPower.IsInvalidType(type))
+            return result;
 
-        /// <summary>
-        /// Sets the <see cref="EncounterStatic.Generation"/> value, for use in determining split-generation origins.
-        /// </summary>
-        /// <remarks>Only used for Gen 1 & 2, as <see cref="PKM.Version"/> data is not present.</remarks>
-        /// <param name="Areas">Ingame encounter data</param>
-        /// <param name="Generation">Generation number to set</param>
-        internal static void MarkEncountersGeneration(IEnumerable<EncounterArea> Areas, int Generation)
+        while (true)
         {
-            foreach (EncounterArea Area in Areas)
-            foreach (EncounterSlot Slot in Area.Slots)
-                Slot.Generation = Generation;
+            if (HiddenPower.GetTypeGB(result) == type)
+                return result;
+            result = (ushort)rand.Next(ushort.MaxValue + 1);
         }
+    }
 
-        /// <summary>
-        /// Groups areas by location id, raw data has areas with different slots but the same location id.
-        /// </summary>
-        /// <remarks>Similar to <see cref="AddExtraTableSlots"/>, this method combines a single array.</remarks>
-        /// <param name="Areas">Ingame encounter data</param>
-        internal static void ReduceAreasSize(ref EncounterArea[] Areas)
+    /// <summary>
+    /// Generates a random Pokémon ID (PID) based on the provided trainer information, random number generator, and
+    /// shiny type.
+    /// </summary>
+    /// <remarks>The shiny type influences the XOR value applied during PID generation:
+    /// <list type="bullet">
+    /// <item><description><see cref="Shiny.AlwaysSquare"/> results in a square shiny PID.</description></item>
+    /// <item><description><see cref="Shiny.AlwaysStar"/> or <see cref="Shiny.Always"/> results in a star shiny PID.</description></item>
+    /// <item><description>Other shiny types result in a PID with a random XOR value within the valid range, but never shiny.</description></item>
+    /// </list>
+    /// The method ensures that the generated PID adheres to the shiny calculation rules based on the provided trainer's TID and SID.</remarks>
+    /// <typeparam name="T">The type of the trainer object, which must implement <see cref="ITrainerID32ReadOnly"/>.</typeparam>
+    /// <param name="tr">The trainer object containing the Trainer ID (TID) and Secret ID (SID) values used for PID generation.</param>
+    /// <param name="rnd">The random number generator used to produce random values for PID calculation.</param>
+    /// <param name="type">The shiny type that determines the XOR value used in PID generation.</param>
+    /// <returns>A 32-bit unsigned integer representing the generated Pokémon ID (PID).</returns>
+    public static uint GetRandomPID<T>(T tr, Random rnd, Shiny type) where T : ITrainerID32ReadOnly
+    {
+        uint pid = rnd.Rand32();
+        uint xorType = type switch
         {
-            Areas = Areas.GroupBy(a => a.Location).Select(a => new EncounterArea
-            {
-                Location = a.First().Location,
-                Slots = a.SelectMany(m => m.Slots).ToArray()
-            }).ToArray();
-        }
+            Shiny.Always => (uint)rnd.Next(0, 15 + 1),
+            Shiny.AlwaysStar => (uint)rnd.Next(1, 15),
+            Shiny.AlwaysSquare => 0,
+            _ => (uint)rnd.Next(16, ushort.MaxValue + 1),
+        };
+        return ShinyUtil.GetShinyPID(tr.TID16, tr.SID16, pid, xorType);
+    }
 
-        /// <summary>
-        /// Sets the <see cref="EncounterArea.Location"/> to the <see cref="EncounterSlot.Location"/> for identifying where the slot is encountered.
-        /// </summary>
-        /// <remarks>Some games / transferred <see cref="PKM"/> data do not contain original encounter location IDs; is mainly for info purposes.</remarks>
-        /// <param name="Areas">Ingame encounter data</param>
-        internal static void MarkSlotLocation(ref EncounterArea[] Areas)
-        {
-            foreach (EncounterArea Area in Areas)
-            foreach (EncounterSlot Slot in Area.Slots)
-                Slot.Location = Area.Location;
-        }
+    public static uint GetRandomPID<T>(T tr, Random rnd, Shiny encounterShiny, Shiny criteriaShiny) where T : ITrainerID32ReadOnly
+    {
+        // Determine actual shiny state to use
+        var shiny = DetermineFinalShinyState(encounterShiny, criteriaShiny);
+        return GetRandomPID(tr, rnd, shiny);
+    }
+
+    private static Shiny DetermineFinalShinyState(Shiny template, Shiny criteria) => template switch
+    {
+        Shiny.Always when criteria.IsShiny() => criteria, // OK to use
+        Shiny.Random => criteria, // Can be whatever the criteria is
+        _ => template, // Use the template shiny state
+    };
+
+    /// <summary>
+    /// Mashes the IVs into a DV16 value.
+    /// </summary>
+    public static ushort GetDV16(in IndividualValueSet actual)
+    {
+        ushort result = 0;
+        result |= (ushort)(actual.SPA << 0);
+        result |= (ushort)(actual.SPE << 4);
+        result |= (ushort)(actual.DEF << 8);
+        result |= (ushort)(actual.ATK << 12);
+        return result;
+    }
+
+    /// <summary>
+    /// Gets the Generation 1 personal info for a Species.
+    /// </summary>
+    /// <param name="version">Pivot version</param>
+    /// <param name="species">Species to get the personal info for</param>
+    public static PersonalInfo1 GetPersonal1(GameVersion version, ushort species)
+    {
+        var pt = version == GameVersion.YW ? PersonalTable.Y : PersonalTable.RB;
+        return pt[species];
+    }
+
+    /// <summary>
+    /// Gets the expected current egg location value for a given entity state and original location value.
+    /// </summary>
+    /// <param name="pk">Current entity state</param>
+    /// <param name="loc">Location value that is expected to be used for the egg location</param>
+    /// <returns>Expected egg location value</returns>
+    internal static ushort GetExpectedEggLocation<T>(T pk, ushort loc) where T : PKM
+    {
+        if (pk is PB8)
+            return Locations8b.GetLocationLocal(loc);
+        return loc;
+    }
+
+    internal static bool IsMatchEggLocation<TEnc, TEntity>(this TEnc enc, TEntity pk)
+        where TEnc : ILocation
+        where TEntity : PKM
+    {
+        var loc = GetExpectedEggLocation(pk, enc.EggLocation);
+        return loc == pk.EggLocation;
     }
 }

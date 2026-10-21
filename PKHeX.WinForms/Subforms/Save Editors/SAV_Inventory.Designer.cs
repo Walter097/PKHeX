@@ -1,4 +1,4 @@
-﻿namespace PKHeX.WinForms
+namespace PKHeX.WinForms
 {
     partial class SAV_Inventory
     {
@@ -28,257 +28,252 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_Inventory));
-            this.B_Cancel = new System.Windows.Forms.Button();
-            this.B_Save = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.IL_Pouch = new System.Windows.Forms.ImageList(this.components);
-            this.B_GiveAll = new System.Windows.Forms.Button();
-            this.B_Sort = new System.Windows.Forms.Button();
-            this.sortMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnuSortName = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuSortNameReverse = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuSortCount = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuSortCountReverse = new System.Windows.Forms.ToolStripMenuItem();
-            this.giveMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.giveAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.giveNone = new System.Windows.Forms.ToolStripMenuItem();
-            this.giveModify = new System.Windows.Forms.ToolStripMenuItem();
-            this.L_Count = new System.Windows.Forms.Label();
-            this.NUD_Count = new System.Windows.Forms.NumericUpDown();
-            this.CHK_NEW = new System.Windows.Forms.CheckBox();
-            this.mnuSortIndex = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuSortIndexReverse = new System.Windows.Forms.ToolStripMenuItem();
-            this.sortMenu.SuspendLayout();
-            this.giveMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NUD_Count)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            B_Cancel = new System.Windows.Forms.Button();
+            B_Save = new System.Windows.Forms.Button();
+            tabControl1 = new System.Windows.Forms.TabControl();
+            B_GiveAll = new System.Windows.Forms.Button();
+            B_Sort = new System.Windows.Forms.Button();
+            sortMenu = new System.Windows.Forms.ContextMenuStrip(components);
+            mnuSortName = new System.Windows.Forms.ToolStripMenuItem();
+            mnuSortNameReverse = new System.Windows.Forms.ToolStripMenuItem();
+            mnuSortCount = new System.Windows.Forms.ToolStripMenuItem();
+            mnuSortCountReverse = new System.Windows.Forms.ToolStripMenuItem();
+            mnuSortIndex = new System.Windows.Forms.ToolStripMenuItem();
+            mnuSortIndexReverse = new System.Windows.Forms.ToolStripMenuItem();
+            giveMenu = new System.Windows.Forms.ContextMenuStrip(components);
+            giveAll = new System.Windows.Forms.ToolStripMenuItem();
+            giveNone = new System.Windows.Forms.ToolStripMenuItem();
+            giveModify = new System.Windows.Forms.ToolStripMenuItem();
+            L_Count = new System.Windows.Forms.Label();
+            NUD_Count = new System.Windows.Forms.NumericUpDown();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            sortMenu.SuspendLayout();
+            giveMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)NUD_Count).BeginInit();
+            tableLayoutPanel1.SuspendLayout();
+            SuspendLayout();
             // 
             // B_Cancel
             // 
-            this.B_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.B_Cancel.Location = new System.Drawing.Point(232, 378);
-            this.B_Cancel.Name = "B_Cancel";
-            this.B_Cancel.Size = new System.Drawing.Size(70, 23);
-            this.B_Cancel.TabIndex = 14;
-            this.B_Cancel.Text = "Cancel";
-            this.B_Cancel.UseVisualStyleBackColor = true;
-            this.B_Cancel.Click += new System.EventHandler(this.B_Cancel_Click);
+            B_Cancel.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            B_Cancel.Location = new System.Drawing.Point(252, 37);
+            B_Cancel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            B_Cancel.Name = "B_Cancel";
+            B_Cancel.Size = new System.Drawing.Size(88, 27);
+            B_Cancel.TabIndex = 14;
+            B_Cancel.Text = "Cancel";
+            B_Cancel.UseVisualStyleBackColor = true;
+            B_Cancel.Click += B_Cancel_Click;
             // 
             // B_Save
             // 
-            this.B_Save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.B_Save.Location = new System.Drawing.Point(232, 354);
-            this.B_Save.Name = "B_Save";
-            this.B_Save.Size = new System.Drawing.Size(70, 23);
-            this.B_Save.TabIndex = 15;
-            this.B_Save.Text = "Save";
-            this.B_Save.UseVisualStyleBackColor = true;
-            this.B_Save.Click += new System.EventHandler(this.B_Save_Click);
+            B_Save.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            B_Save.Location = new System.Drawing.Point(252, 3);
+            B_Save.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            B_Save.Name = "B_Save";
+            B_Save.Size = new System.Drawing.Size(88, 27);
+            B_Save.TabIndex = 15;
+            B_Save.Text = "Save";
+            B_Save.UseVisualStyleBackColor = true;
+            B_Save.Click += B_Save_Click;
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.ImageList = this.IL_Pouch;
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(291, 336);
-            this.tabControl1.TabIndex = 17;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.SwitchBag);
-            // 
-            // IL_Pouch
-            // 
-            this.IL_Pouch.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IL_Pouch.ImageStream")));
-            this.IL_Pouch.TransparentColor = System.Drawing.Color.Transparent;
-            this.IL_Pouch.Images.SetKeyName(0, "Bag_Items.png");
-            this.IL_Pouch.Images.SetKeyName(1, "Bag_Key.png");
-            this.IL_Pouch.Images.SetKeyName(2, "Bag_TMHM.png");
-            this.IL_Pouch.Images.SetKeyName(3, "Bag_Medicine.png");
-            this.IL_Pouch.Images.SetKeyName(4, "Bag_Berries.png");
-            this.IL_Pouch.Images.SetKeyName(5, "Bag_Balls.png");
-            this.IL_Pouch.Images.SetKeyName(6, "Bag_Battle.png");
-            this.IL_Pouch.Images.SetKeyName(7, "Bag_Mail.png");
-            this.IL_Pouch.Images.SetKeyName(8, "Bag_PCItems.png");
-            this.IL_Pouch.Images.SetKeyName(9, "Bag_Free.png");
-            this.IL_Pouch.Images.SetKeyName(10, "Bag_Z.png");
+            tabControl1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tabControl1.Location = new System.Drawing.Point(0, 0);
+            tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            tabControl1.Name = "tabControl1";
+            tabControl1.Padding = new System.Drawing.Point(0, 0);
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new System.Drawing.Size(346, 293);
+            tabControl1.TabIndex = 17;
+            tabControl1.SelectedIndexChanged += SwitchBag;
             // 
             // B_GiveAll
             // 
-            this.B_GiveAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.B_GiveAll.Location = new System.Drawing.Point(12, 378);
-            this.B_GiveAll.Name = "B_GiveAll";
-            this.B_GiveAll.Size = new System.Drawing.Size(75, 23);
-            this.B_GiveAll.TabIndex = 18;
-            this.B_GiveAll.Text = "Give All";
-            this.B_GiveAll.UseVisualStyleBackColor = true;
-            this.B_GiveAll.Click += new System.EventHandler(this.B_GiveAll_Click);
+            B_GiveAll.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            B_GiveAll.AutoSize = true;
+            B_GiveAll.Location = new System.Drawing.Point(4, 37);
+            B_GiveAll.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
+            B_GiveAll.Name = "B_GiveAll";
+            B_GiveAll.Size = new System.Drawing.Size(104, 27);
+            B_GiveAll.TabIndex = 18;
+            B_GiveAll.Text = "Give All";
+            B_GiveAll.UseVisualStyleBackColor = true;
+            B_GiveAll.Click += B_GiveAll_Click;
             // 
             // B_Sort
             // 
-            this.B_Sort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.B_Sort.ContextMenuStrip = this.sortMenu;
-            this.B_Sort.Location = new System.Drawing.Point(12, 354);
-            this.B_Sort.Name = "B_Sort";
-            this.B_Sort.Size = new System.Drawing.Size(75, 23);
-            this.B_Sort.TabIndex = 19;
-            this.B_Sort.Text = "Sort";
-            this.B_Sort.UseVisualStyleBackColor = true;
-            this.B_Sort.Click += new System.EventHandler(this.B_Sort_Click);
+            B_Sort.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            B_Sort.AutoSize = true;
+            B_Sort.ContextMenuStrip = sortMenu;
+            B_Sort.Location = new System.Drawing.Point(4, 3);
+            B_Sort.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
+            B_Sort.Name = "B_Sort";
+            B_Sort.Size = new System.Drawing.Size(104, 27);
+            B_Sort.TabIndex = 19;
+            B_Sort.Text = "Sort";
+            B_Sort.UseVisualStyleBackColor = true;
+            B_Sort.Click += B_Sort_Click;
             // 
             // sortMenu
             // 
-            this.sortMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuSortName,
-            this.mnuSortNameReverse,
-            this.mnuSortCount,
-            this.mnuSortCountReverse,
-            this.mnuSortIndex,
-            this.mnuSortIndexReverse});
-            this.sortMenu.Name = "modifyMenu";
-            this.sortMenu.Size = new System.Drawing.Size(159, 158);
+            sortMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { mnuSortName, mnuSortNameReverse, toolStripSeparator2, mnuSortCount, mnuSortCountReverse, toolStripSeparator1, mnuSortIndex, mnuSortIndexReverse });
+            sortMenu.Name = "modifyMenu";
+            sortMenu.Size = new System.Drawing.Size(170, 148);
             // 
             // mnuSortName
             // 
-            this.mnuSortName.Name = "mnuSortName";
-            this.mnuSortName.Size = new System.Drawing.Size(158, 22);
-            this.mnuSortName.Text = "Name";
-            this.mnuSortName.Click += new System.EventHandler(this.SortByName);
+            mnuSortName.Image = Properties.Resources.alphaAZ;
+            mnuSortName.Name = "mnuSortName";
+            mnuSortName.Size = new System.Drawing.Size(169, 22);
+            mnuSortName.Text = "Name";
+            mnuSortName.Click += SortByName;
             // 
             // mnuSortNameReverse
             // 
-            this.mnuSortNameReverse.Name = "mnuSortNameReverse";
-            this.mnuSortNameReverse.Size = new System.Drawing.Size(158, 22);
-            this.mnuSortNameReverse.Text = "Name (Reverse)";
-            this.mnuSortNameReverse.Click += new System.EventHandler(this.SortByName);
+            mnuSortNameReverse.Image = Properties.Resources.alphaZA;
+            mnuSortNameReverse.Name = "mnuSortNameReverse";
+            mnuSortNameReverse.Size = new System.Drawing.Size(169, 22);
+            mnuSortNameReverse.Text = "Name (Reverse)";
+            mnuSortNameReverse.Click += SortByName;
             // 
             // mnuSortCount
             // 
-            this.mnuSortCount.Name = "mnuSortCount";
-            this.mnuSortCount.Size = new System.Drawing.Size(158, 22);
-            this.mnuSortCount.Text = "Count";
-            this.mnuSortCount.Click += new System.EventHandler(this.SortByCount);
+            mnuSortCount.Image = Properties.Resources.numlohi;
+            mnuSortCount.Name = "mnuSortCount";
+            mnuSortCount.Size = new System.Drawing.Size(169, 22);
+            mnuSortCount.Text = "Count";
+            mnuSortCount.Click += SortByCount;
             // 
             // mnuSortCountReverse
             // 
-            this.mnuSortCountReverse.Name = "mnuSortCountReverse";
-            this.mnuSortCountReverse.Size = new System.Drawing.Size(158, 22);
-            this.mnuSortCountReverse.Text = "Count (Reverse)";
-            this.mnuSortCountReverse.Click += new System.EventHandler(this.SortByCount);
-            // 
-            // giveMenu
-            // 
-            this.giveMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.giveAll,
-            this.giveNone,
-            this.giveModify});
-            this.giveMenu.Name = "modifyMenu";
-            this.giveMenu.Size = new System.Drawing.Size(113, 70);
-            // 
-            // giveAll
-            // 
-            this.giveAll.Name = "giveAll";
-            this.giveAll.Size = new System.Drawing.Size(112, 22);
-            this.giveAll.Text = "All";
-            this.giveAll.Click += new System.EventHandler(this.GiveAllItems);
-            // 
-            // giveNone
-            // 
-            this.giveNone.Name = "giveNone";
-            this.giveNone.Size = new System.Drawing.Size(112, 22);
-            this.giveNone.Text = "None";
-            this.giveNone.Click += new System.EventHandler(this.RemoveAllItems);
-            // 
-            // giveModify
-            // 
-            this.giveModify.Name = "giveModify";
-            this.giveModify.Size = new System.Drawing.Size(112, 22);
-            this.giveModify.Text = "Modify";
-            this.giveModify.Click += new System.EventHandler(this.ModifyAllItems);
-            // 
-            // L_Count
-            // 
-            this.L_Count.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.L_Count.AutoSize = true;
-            this.L_Count.Location = new System.Drawing.Point(92, 367);
-            this.L_Count.Name = "L_Count";
-            this.L_Count.Size = new System.Drawing.Size(38, 13);
-            this.L_Count.TabIndex = 20;
-            this.L_Count.Text = "Count:";
-            // 
-            // NUD_Count
-            // 
-            this.NUD_Count.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NUD_Count.Location = new System.Drawing.Point(93, 381);
-            this.NUD_Count.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.NUD_Count.Name = "NUD_Count";
-            this.NUD_Count.Size = new System.Drawing.Size(49, 20);
-            this.NUD_Count.TabIndex = 21;
-            this.NUD_Count.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // CHK_NEW
-            // 
-            this.CHK_NEW.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CHK_NEW.AutoSize = true;
-            this.CHK_NEW.Checked = true;
-            this.CHK_NEW.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CHK_NEW.Location = new System.Drawing.Point(148, 384);
-            this.CHK_NEW.Name = "CHK_NEW";
-            this.CHK_NEW.Size = new System.Drawing.Size(75, 17);
-            this.CHK_NEW.TabIndex = 22;
-            this.CHK_NEW.Text = "Flag NEW";
-            this.CHK_NEW.UseVisualStyleBackColor = true;
+            mnuSortCountReverse.Image = Properties.Resources.numhilo;
+            mnuSortCountReverse.Name = "mnuSortCountReverse";
+            mnuSortCountReverse.Size = new System.Drawing.Size(169, 22);
+            mnuSortCountReverse.Text = "Count (Reverse)";
+            mnuSortCountReverse.Click += SortByCount;
             // 
             // mnuSortIndex
             // 
-            this.mnuSortIndex.Name = "mnuSortIndex";
-            this.mnuSortIndex.Size = new System.Drawing.Size(158, 22);
-            this.mnuSortIndex.Text = "Index";
-            this.mnuSortIndex.Click += new System.EventHandler(this.SortByIndex);
+            mnuSortIndex.Image = Properties.Resources.numlohi;
+            mnuSortIndex.Name = "mnuSortIndex";
+            mnuSortIndex.Size = new System.Drawing.Size(169, 22);
+            mnuSortIndex.Text = "Index";
+            mnuSortIndex.Click += SortByIndex;
             // 
             // mnuSortIndexReverse
             // 
-            this.mnuSortIndexReverse.Name = "mnuSortIndexReverse";
-            this.mnuSortIndexReverse.Size = new System.Drawing.Size(158, 22);
-            this.mnuSortIndexReverse.Text = "Index (Reverse)";
-            this.mnuSortIndexReverse.Click += new System.EventHandler(this.SortByIndex);
+            mnuSortIndexReverse.Image = Properties.Resources.numhilo;
+            mnuSortIndexReverse.Name = "mnuSortIndexReverse";
+            mnuSortIndexReverse.Size = new System.Drawing.Size(169, 22);
+            mnuSortIndexReverse.Text = "Index (Reverse)";
+            mnuSortIndexReverse.Click += SortByIndex;
+            // 
+            // giveMenu
+            // 
+            giveMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { giveAll, giveNone, giveModify });
+            giveMenu.Name = "modifyMenu";
+            giveMenu.Size = new System.Drawing.Size(118, 70);
+            // 
+            // giveAll
+            // 
+            giveAll.Image = Properties.Resources.database;
+            giveAll.Name = "giveAll";
+            giveAll.Size = new System.Drawing.Size(117, 22);
+            giveAll.Text = "All";
+            giveAll.Click += GiveAllItems;
+            // 
+            // giveNone
+            // 
+            giveNone.Image = Properties.Resources.open;
+            giveNone.Name = "giveNone";
+            giveNone.Size = new System.Drawing.Size(117, 22);
+            giveNone.Text = "None";
+            giveNone.Click += RemoveAllItems;
+            // 
+            // giveModify
+            // 
+            giveModify.Image = Properties.Resources.settings;
+            giveModify.Name = "giveModify";
+            giveModify.Size = new System.Drawing.Size(117, 22);
+            giveModify.Text = "Modify";
+            giveModify.Click += ModifyAllItems;
+            // 
+            // L_Count
+            // 
+            L_Count.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            L_Count.AutoSize = true;
+            L_Count.Location = new System.Drawing.Point(111, 17);
+            L_Count.Name = "L_Count";
+            L_Count.Size = new System.Drawing.Size(45, 17);
+            L_Count.TabIndex = 20;
+            L_Count.Text = "Count:";
+            // 
+            // NUD_Count
+            // 
+            NUD_Count.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            NUD_Count.Location = new System.Drawing.Point(111, 38);
+            NUD_Count.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            NUD_Count.Name = "NUD_Count";
+            NUD_Count.Size = new System.Drawing.Size(49, 25);
+            NUD_Count.TabIndex = 21;
+            NUD_Count.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel1.Controls.Add(B_Save, 2, 0);
+            tableLayoutPanel1.Controls.Add(B_Cancel, 2, 1);
+            tableLayoutPanel1.Controls.Add(B_GiveAll, 0, 1);
+            tableLayoutPanel1.Controls.Add(B_Sort, 0, 0);
+            tableLayoutPanel1.Controls.Add(L_Count, 1, 0);
+            tableLayoutPanel1.Controls.Add(NUD_Count, 1, 1);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 293);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(344, 68);
+            tableLayoutPanel1.TabIndex = 22;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(166, 6);
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(166, 6);
             // 
             // SAV_Inventory
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 411);
-            this.Controls.Add(this.CHK_NEW);
-            this.Controls.Add(this.NUD_Count);
-            this.Controls.Add(this.L_Count);
-            this.Controls.Add(this.B_Sort);
-            this.Controls.Add(this.B_GiveAll);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.B_Save);
-            this.Controls.Add(this.B_Cancel);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(330, 450);
-            this.Name = "SAV_Inventory";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Inventory Editor";
-            this.sortMenu.ResumeLayout(false);
-            this.giveMenu.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.NUD_Count)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            ClientSize = new System.Drawing.Size(344, 361);
+            Controls.Add(tableLayoutPanel1);
+            Controls.Add(tabControl1);
+            Icon = Properties.Resources.Icon;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            MinimumSize = new System.Drawing.Size(320, 400);
+            Name = "SAV_Inventory";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Inventory Editor";
+            sortMenu.ResumeLayout(false);
+            giveMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)NUD_Count).EndInit();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            ResumeLayout(false);
 
         }
 
@@ -287,7 +282,6 @@
         private System.Windows.Forms.Button B_Save;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Button B_GiveAll;
-        private System.Windows.Forms.ImageList IL_Pouch;
         private System.Windows.Forms.Button B_Sort;
         private System.Windows.Forms.ContextMenuStrip sortMenu;
         private System.Windows.Forms.ToolStripMenuItem mnuSortNameReverse;
@@ -299,9 +293,11 @@
         private System.Windows.Forms.ToolStripMenuItem mnuSortCount;
         private System.Windows.Forms.Label L_Count;
         private System.Windows.Forms.NumericUpDown NUD_Count;
-        private System.Windows.Forms.CheckBox CHK_NEW;
         private System.Windows.Forms.ToolStripMenuItem giveModify;
         private System.Windows.Forms.ToolStripMenuItem mnuSortIndex;
         private System.Windows.Forms.ToolStripMenuItem mnuSortIndexReverse;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

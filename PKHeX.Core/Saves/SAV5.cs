@@ -1,705 +1,323 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
+using static System.Buffers.Binary.BinaryPrimitives;
 
-namespace PKHeX.Core
+namespace PKHeX.Core;
+
+/// <summary>
+/// Generation 5 <see cref="SaveFile"/> object.
+/// </summary>
+public abstract class SAV5 : SaveFile, ISaveBlock5BW, IEventFlagProvider37, IBoxDetailName, IBoxDetailWallpaper, IDaycareRandomState<ulong>, IDaycareStorage, IDaycareExperience, IDaycareEggState, IMysteryGiftStorageProvider
 {
-    public sealed class SAV5 : SaveFile
+    protected override PK5 GetPKM(Memory<byte> data) => new(data);
+    protected override void DecryptPKM(Span<byte> data) => PokeCrypto.Decrypt45(data);
+
+    protected internal override string ShortSummary => $"{OT} ({Version}) - {PlayTimeString}";
+    public override string Extension => ".sav";
+
+    public override ReadOnlySpan<ushort> HeldItems => Legal.HeldItems_BW;
+    public override int SIZE_STORED => PokeCrypto.SIZE_5STORED;
+    public override int SIZE_PARTY => PokeCrypto.SIZE_5PARTY;
+    public override PK5 BlankPKM => new();
+    public override Type PKMType => typeof(PK5);
+
+    public override int BoxCount => 24;
+    public override int MaxEV => EffortValues.Max255;
+    public override byte Generation => 5;
+    public override EntityContext Context => EntityContext.Gen5;
+    public override int MaxStringLengthTrainer => 7;
+    public override int MaxStringLengthNickname => 10;
+
+    public override ushort MaxMoveID => Legal.MaxMoveID_5;
+    public override ushort MaxSpeciesID => Legal.MaxSpeciesID_5;
+    public override int MaxAbilityID => Legal.MaxAbilityID_5;
+    public override int MaxBallID => Legal.MaxBallID_5;
+    public override GameVersion MaxGameID => Legal.MaxGameID_5; // B2
+
+    protected SAV5([ConstantExpected] int size) : base(size)
     {
-        // Save Data Attributes
-        public override string BAKName => $"{FileName} [{OT} ({(GameVersion)Game}) - {PlayTimeString}].bak";
-        public override string Filter => (Footer.Length > 0 ? "DeSmuME DSV|*.dsv|" : "") + "SAV File|*.sav|All Files|*.*";
-        public override string Extension => ".sav";
-        public SAV5(byte[] data = null, GameVersion versionOverride = GameVersion.Any)
-        {
-            Data = data == null ? new byte[SaveUtil.SIZE_G5RAW] : (byte[])data.Clone();
-            BAK = (byte[])Data.Clone();
-            Exportable = !Data.SequenceEqual(new byte[Data.Length]);
-
-            // Get Version
-            if (data == null)
-                Version = GameVersion.B2W2;
-            else if (versionOverride != GameVersion.Any)
-                Version = versionOverride;
-            else Version = SaveUtil.GetIsG5SAV(Data);
-            if (Version == GameVersion.Invalid)
-                return;
-
-            // First blocks are always the same position/size
-            PCLayout = 0x0;
-            Box = 0x400;
-            Party = 0x18E00;
-            Trainer1 = 0x19400;
-            WondercardData = 0x1C800;
-            AdventureInfo = 0x1D900;
-
-            // Different Offsets for later blocks
-            switch (Version)
-            {
-                case GameVersion.BW:
-                    BattleBox = 0x20A00;
-                    Trainer2 = 0x21200;
-                    EventConst = 0x20100;
-                    EventFlag = EventConst + 0x27C;
-                    Daycare = 0x20E00;
-                    PokeDex = 0x21600;
-                    PokeDexLanguageFlags = PokeDex + 0x320;
-                    CGearInfoOffset = 0x1C000;
-                    CGearDataOffset = 0x52000;
-
-                    // Inventory offsets are the same for each game.
-                    OFS_PouchHeldItem = 0x18400; // 0x188D7
-                    OFS_PouchKeyItem = 0x188D8; // 0x18A23
-                    OFS_PouchTMHM = 0x18A24; // 0x18BD7
-                    OFS_PouchMedicine = 0x18BD8; // 0x18C97
-                    OFS_PouchBerry = 0x18C98; // 0x18DBF
-                    LegalItems = Legal.Pouch_Items_BW;
-                    LegalKeyItems = Legal.Pouch_Key_BW;
-                    LegalTMHMs = Legal.Pouch_TMHM_BW;
-                    LegalMedicine = Legal.Pouch_Medicine_BW;
-                    LegalBerries = Legal.Pouch_Berries_BW;
-
-                    Personal = PersonalTable.BW;
-                    break;
-                case GameVersion.B2W2: // B2W2
-                    BattleBox = 0x20900;
-                    Trainer2 = 0x21100;
-                    EventConst = 0x1FF00;
-                    EventFlag = EventConst + 0x35E;
-                    Daycare = 0x20D00;
-                    PokeDex = 0x21400;
-                    PokeDexLanguageFlags = PokeDex + 0x328; // forme flags size is + 8 from bw with new formes (therians)
-                    CGearInfoOffset = 0x1C000;
-                    CGearDataOffset = 0x52800;
-
-                    // Inventory offsets are the same for each game.
-                    OFS_PouchHeldItem = 0x18400; // 0x188D7
-                    OFS_PouchKeyItem = 0x188D8; // 0x18A23
-                    OFS_PouchTMHM = 0x18A24; // 0x18BD7
-                    OFS_PouchMedicine = 0x18BD8; // 0x18C97
-                    OFS_PouchBerry = 0x18C98; // 0x18DBF
-                    LegalItems = Legal.Pouch_Items_BW;
-                    LegalKeyItems = Legal.Pouch_Key_B2W2;
-                    LegalTMHMs = Legal.Pouch_TMHM_BW;
-                    LegalMedicine = Legal.Pouch_Medicine_BW;
-                    LegalBerries = Legal.Pouch_Berries_BW;
-
-                    Personal = PersonalTable.B2W2;
-                    break;
-            }
-            HeldItems = Legal.HeldItems_BW;
-            GetBlockInfo();
-
-            if (!Exportable)
-                ClearBoxes();
-        }
-
-        // Configuration
-        public override SaveFile Clone() { return new SAV5(Data, Version); }
-
-        public override int SIZE_STORED => PKX.SIZE_5STORED;
-        protected override int SIZE_PARTY => PKX.SIZE_5PARTY;
-        public override PKM BlankPKM => new PK5();
-        public override Type PKMType => typeof(PK5);
-
-        public override int BoxCount => 24;
-        public override int MaxEV => 255;
-        public override int Generation => 5;
-        public override int OTLength => 7;
-        public override int NickLength => 10;
-        protected override int EventConstMax => (Version == GameVersion.BW ? 0x27C : 0x35E) >> 1;
-        protected override int EventFlagMax => (Version == GameVersion.BW ? 0x16C : 0x17F) << 3;
-        protected override int GiftCountMax => 12;
-
-        public override int MaxMoveID => Legal.MaxMoveID_5;
-        public override int MaxSpeciesID => Legal.MaxSpeciesID_5;
-        public override int MaxItemID => Version == GameVersion.BW ? Legal.MaxItemID_5_BW : Legal.MaxItemID_5_B2W2;
-        public override int MaxAbilityID => Legal.MaxAbilityID_5;
-        public override int MaxBallID => Legal.MaxBallID_5;
-        public override int MaxGameID => Legal.MaxGameID_5; // B2
-
-        // Blocks & Offsets
-        private BlockInfo[] Blocks;
-        private void GetBlockInfo()
-        {
-            // Can be slick with just a list of block lengths, but oh well, precomputed.
-            switch (Version)
-            {
-                case GameVersion.BW:
-                    Blocks = new[]
-                    {
-                        new BlockInfo(0x00000, 0x03E0, 0x003E2, 0x23F00), // Box Names
-                        new BlockInfo(0x00400, 0x0FF0, 0x013F2, 0x23F02), // Box 1
-                        new BlockInfo(0x01400, 0x0FF0, 0x023F2, 0x23F04), // Box 2
-                        new BlockInfo(0x02400, 0x0FF0, 0x033F2, 0x23F06), // Box 3
-                        new BlockInfo(0x03400, 0x0FF0, 0x043F2, 0x23F08), // Box 4
-                        new BlockInfo(0x04400, 0x0FF0, 0x053F2, 0x23F0A), // Box 5
-                        new BlockInfo(0x05400, 0x0FF0, 0x063F2, 0x23F0C), // Box 6
-                        new BlockInfo(0x06400, 0x0FF0, 0x073F2, 0x23F0E), // Box 7
-                        new BlockInfo(0x07400, 0x0FF0, 0x083F2, 0x23F10), // Box 8
-                        new BlockInfo(0x08400, 0x0FF0, 0x093F2, 0x23F12), // Box 9
-                        new BlockInfo(0x09400, 0x0FF0, 0x0A3F2, 0x23F14), // Box 10
-                        new BlockInfo(0x0A400, 0x0FF0, 0x0B3F2, 0x23F16), // Box 11
-                        new BlockInfo(0x0B400, 0x0FF0, 0x0C3F2, 0x23F18), // Box 12
-                        new BlockInfo(0x0C400, 0x0FF0, 0x0D3F2, 0x23F1A), // Box 13
-                        new BlockInfo(0x0D400, 0x0FF0, 0x0E3F2, 0x23F1C), // Box 14
-                        new BlockInfo(0x0E400, 0x0FF0, 0x0F3F2, 0x23F1E), // Box 15
-                        new BlockInfo(0x0F400, 0x0FF0, 0x103F2, 0x23F20), // Box 16
-                        new BlockInfo(0x10400, 0x0FF0, 0x113F2, 0x23F22), // Box 17
-                        new BlockInfo(0x11400, 0x0FF0, 0x123F2, 0x23F24), // Box 18
-                        new BlockInfo(0x12400, 0x0FF0, 0x133F2, 0x23F26), // Box 19
-                        new BlockInfo(0x13400, 0x0FF0, 0x143F2, 0x23F28), // Box 20
-                        new BlockInfo(0x14400, 0x0FF0, 0x153F2, 0x23F2A), // Box 21
-                        new BlockInfo(0x15400, 0x0FF0, 0x163F2, 0x23F2C), // Box 22
-                        new BlockInfo(0x16400, 0x0FF0, 0x173F2, 0x23F2E), // Box 23
-                        new BlockInfo(0x17400, 0x0FF0, 0x183F2, 0x23F30), // Box 24
-                        new BlockInfo(0x18400, 0x09C0, 0x18DC2, 0x23F32), // Inventory
-                        new BlockInfo(0x18E00, 0x0534, 0x19336, 0x23F34), // Party Pokemon
-                        new BlockInfo(0x19400, 0x0068, 0x1946A, 0x23F36), // Trainer Data
-                        new BlockInfo(0x19500, 0x009C, 0x1959E, 0x23F38), // Trainer Position
-                        new BlockInfo(0x19600, 0x1338, 0x1A93A, 0x23F3A), // Unity Tower and survey stuff
-                        new BlockInfo(0x1AA00, 0x07C4, 0x1B1C6, 0x23F3C), // Pal Pad Player Data
-                        new BlockInfo(0x1B200, 0x0D54, 0x1BF56, 0x23F3E), // Pal Pad Friend Data
-                        new BlockInfo(0x1C000, 0x002C, 0x1C02E, 0x23F40), // Skin Info
-                        new BlockInfo(0x1C100, 0x0658, 0x1C75A, 0x23F42), // ??? Gym badge data
-                        new BlockInfo(0x1C800, 0x0A94, 0x1D296, 0x23F44), // Mystery Gift
-                        new BlockInfo(0x1D300, 0x01AC, 0x1D4AE, 0x23F46), // Dream World Stuff (Catalog)
-                        new BlockInfo(0x1D500, 0x03EC, 0x1D8EE, 0x23F48), // Chatter
-                        new BlockInfo(0x1D900, 0x005C, 0x1D95E, 0x23F4A), // Adventure Info
-                        new BlockInfo(0x1DA00, 0x01E0, 0x1DBE2, 0x23F4C), // Trainer Card Records
-                        new BlockInfo(0x1DC00, 0x00A8, 0x1DCAA, 0x23F4E), // ???
-                        new BlockInfo(0x1DD00, 0x0460, 0x1E162, 0x23F50), // (40d)
-                        new BlockInfo(0x1E200, 0x1400, 0x1F602, 0x23F52), // ???
-                        new BlockInfo(0x1F700, 0x02A4, 0x1F9A6, 0x23F54), // Contains flags and references for downloaded data (Musical)
-                        new BlockInfo(0x1FA00, 0x02DC, 0x1FCDE, 0x23F56), // ???
-                        new BlockInfo(0x1FD00, 0x034C, 0x2004E, 0x23F58), // ???
-                        new BlockInfo(0x20100, 0x03EC, 0x204EE, 0x23F5A), // ???
-                        new BlockInfo(0x20500, 0x00F8, 0x205FA, 0x23F5C), // ???
-                        new BlockInfo(0x20600, 0x02FC, 0x208FE, 0x23F5E), // Tournament Block
-                        new BlockInfo(0x20900, 0x0094, 0x20996, 0x23F60), // ???
-                        new BlockInfo(0x20A00, 0x035C, 0x20D5E, 0x23F62), // Battle Box Block
-                        new BlockInfo(0x20E00, 0x01CC, 0x20FCE, 0x23F64), // Daycare Block
-                        new BlockInfo(0x21000, 0x0168, 0x2116A, 0x23F66), // Strength Boulder Status Block
-                        new BlockInfo(0x21200, 0x00EC, 0x212EE, 0x23F68), // Badge Flags, Money, Trainer Sayings
-                        new BlockInfo(0x21300, 0x01B0, 0x214B2, 0x23F6A), // Entralink (Level & Powers etc)
-                        new BlockInfo(0x21500, 0x001C, 0x2151E, 0x23F6C), // ???
-                        new BlockInfo(0x21600, 0x04D4, 0x21AD6, 0x23F6E), // Pokedex
-                        new BlockInfo(0x21B00, 0x0034, 0x21B36, 0x23F70), // Swarm and other overworld info - 2C - swarm, 2D - repel steps, 2E repel type
-                        new BlockInfo(0x21C00, 0x003C, 0x21C3E, 0x23F72), // ???
-                        new BlockInfo(0x21D00, 0x01AC, 0x21EAE, 0x23F74), // ???
-                        new BlockInfo(0x21F00, 0x0B90, 0x22A92, 0x23F76), // ???
-                        new BlockInfo(0x22B00, 0x009C, 0x22B9E, 0x23F78), // Online Records
-                        new BlockInfo(0x22C00, 0x0850, 0x23452, 0x23F7A), // Entralink Forest pokémon data
-                        new BlockInfo(0x23500, 0x0028, 0x2352A, 0x23F7C), // ???
-                        new BlockInfo(0x23600, 0x0284, 0x23886, 0x23F7E), // ???
-                        new BlockInfo(0x23900, 0x0010, 0x23912, 0x23F80), // ???
-                        new BlockInfo(0x23A00, 0x005C, 0x23A5E, 0x23F82), // ???
-                        new BlockInfo(0x23B00, 0x016C, 0x23C6E, 0x23F84), // ???
-                        new BlockInfo(0x23D00, 0x0040, 0x23D42, 0x23F86), // ???
-                        new BlockInfo(0x23E00, 0x00FC, 0x23EFE, 0x23F88), // ???
-                        new BlockInfo(0x23F00, 0x008C, 0x23F9A, 0x23F9A), // Checksums */
-                    };
-                    break;
-                case GameVersion.B2W2:
-                    Blocks = new[]
-                    {
-                        // Offset, Length, CHKOfst, ChkMirror
-                        new BlockInfo(0x00000, 0x03e0, 0x003E2, 0x25F00), // Box Names
-                        new BlockInfo(0x00400, 0x0ff0, 0x013F2, 0x25F02), // Box 1
-                        new BlockInfo(0x01400, 0x0ff0, 0x023F2, 0x25F04), // Box 2
-                        new BlockInfo(0x02400, 0x0ff0, 0x033F2, 0x25F06), // Box 3
-                        new BlockInfo(0x03400, 0x0ff0, 0x043F2, 0x25F08), // Box 4
-                        new BlockInfo(0x04400, 0x0ff0, 0x053F2, 0x25F0A), // Box 5
-                        new BlockInfo(0x05400, 0x0ff0, 0x063F2, 0x25F0C), // Box 6
-                        new BlockInfo(0x06400, 0x0ff0, 0x073F2, 0x25F0E), // Box 7
-                        new BlockInfo(0x07400, 0x0ff0, 0x083F2, 0x25F10), // Box 8
-                        new BlockInfo(0x08400, 0x0ff0, 0x093F2, 0x25F12), // Box 9
-                        new BlockInfo(0x09400, 0x0ff0, 0x0A3F2, 0x25F14), // Box 10
-                        new BlockInfo(0x0A400, 0x0ff0, 0x0B3F2, 0x25F16), // Box 11
-                        new BlockInfo(0x0B400, 0x0ff0, 0x0C3F2, 0x25F18), // Box 12
-                        new BlockInfo(0x0C400, 0x0ff0, 0x0D3F2, 0x25F1A), // Box 13
-                        new BlockInfo(0x0D400, 0x0ff0, 0x0E3F2, 0x25F1C), // Box 14
-                        new BlockInfo(0x0E400, 0x0ff0, 0x0F3F2, 0x25F1E), // Box 15
-                        new BlockInfo(0x0F400, 0x0ff0, 0x103F2, 0x25F20), // Box 16
-                        new BlockInfo(0x10400, 0x0ff0, 0x113F2, 0x25F22), // Box 17
-                        new BlockInfo(0x11400, 0x0ff0, 0x123F2, 0x25F24), // Box 18
-                        new BlockInfo(0x12400, 0x0ff0, 0x133F2, 0x25F26), // Box 19
-                        new BlockInfo(0x13400, 0x0ff0, 0x143F2, 0x25F28), // Box 20
-                        new BlockInfo(0x14400, 0x0ff0, 0x153F2, 0x25F2A), // Box 21
-                        new BlockInfo(0x15400, 0x0ff0, 0x163F2, 0x25F2C), // Box 22
-                        new BlockInfo(0x16400, 0x0ff0, 0x173F2, 0x25F2E), // Box 23
-                        new BlockInfo(0x17400, 0x0ff0, 0x183F2, 0x25F30), // Box 24
-                        new BlockInfo(0x18400, 0x09ec, 0x18DEE, 0x25F32), // Inventory
-                        new BlockInfo(0x18E00, 0x0534, 0x19336, 0x25F34), // Party Pokemon
-                        new BlockInfo(0x19400, 0x00b0, 0x194B2, 0x25F36), // Trainer Data
-                        new BlockInfo(0x19500, 0x00a8, 0x195AA, 0x25F38), // Trainer Position
-                        new BlockInfo(0x19600, 0x1338, 0x1A93A, 0x25F3A), // Unity Tower and survey stuff
-                        new BlockInfo(0x1AA00, 0x07c4, 0x1B1C6, 0x25F3C), // Pal Pad Player Data (30d)
-                        new BlockInfo(0x1B200, 0x0d54, 0x1BF56, 0x25F3E), // Pal Pad Friend Data
-                        new BlockInfo(0x1C000, 0x0094, 0x1C096, 0x25F40), // Skin Info
-                        new BlockInfo(0x1C100, 0x0658, 0x1C75A, 0x25F42), // Card Signature Block & ????
-                        new BlockInfo(0x1C800, 0x0a94, 0x1D296, 0x25F44), // Mystery Gift
-                        new BlockInfo(0x1D300, 0x01ac, 0x1D4AE, 0x25F46), // Dream World Stuff (Catalog)
-                        new BlockInfo(0x1D500, 0x03ec, 0x1D8EE, 0x25F48), // Chatter
-                        new BlockInfo(0x1D900, 0x005c, 0x1D95E, 0x25F4A), // Adventure data
-                        new BlockInfo(0x1DA00, 0x01e0, 0x1DBE2, 0x25F4C), // Trainer Card Records
-                        new BlockInfo(0x1DC00, 0x00a8, 0x1DCAA, 0x25F4E), // ???
-                        new BlockInfo(0x1DD00, 0x0460, 0x1E162, 0x25F50), // (40d)
-                        new BlockInfo(0x1E200, 0x1400, 0x1F602, 0x25F52), // ???
-                        new BlockInfo(0x1F700, 0x02a4, 0x1F9A6, 0x25F54), // Contains flags and references for downloaded data (Musical)
-                        new BlockInfo(0x1FA00, 0x00e0, 0x1FAE2, 0x25F56), // Fused Reshiram/Zekrom Storage
-                        new BlockInfo(0x1FB00, 0x034c, 0x1FE4E, 0x25F58), // ???
-                        new BlockInfo(0x1FF00, 0x04e0, 0x203E2, 0x25F5A), // Const Data Block and Event Flag Block (0x35E is the split)
-                        new BlockInfo(0x20400, 0x00f8, 0x204FA, 0x25F5C), // ???
-                        new BlockInfo(0x20500, 0x02fc, 0x207FE, 0x25F5E), // Tournament Block
-                        new BlockInfo(0x20800, 0x0094, 0x20896, 0x25F60), // ???
-                        new BlockInfo(0x20900, 0x035c, 0x20C5E, 0x25F62), // Battle Box Block
-                        new BlockInfo(0x20D00, 0x01d4, 0x20ED6, 0x25F64), // Daycare Block (50d)
-                        new BlockInfo(0x20F00, 0x01e0, 0x210E2, 0x25F66), // Strength Boulder Status Block
-                        new BlockInfo(0x21100, 0x00f0, 0x211F2, 0x25F68), // Badge Flags, Money, Trainer Sayings
-                        new BlockInfo(0x21200, 0x01b4, 0x213B6, 0x25F6A), // Entralink (Level & Powers etc)
-                        new BlockInfo(0x21400, 0x04dc, 0x218DE, 0x25F6C), // Pokedex
-                        new BlockInfo(0x21900, 0x0034, 0x21936, 0x25F6E), // Swarm and other overworld info - 2C - swarm, 2D - repel steps, 2E repel type
-                        new BlockInfo(0x21A00, 0x003c, 0x21A3E, 0x25F70), // ???
-                        new BlockInfo(0x21B00, 0x01ac, 0x21CAE, 0x25F72), // ???
-                        new BlockInfo(0x21D00, 0x0b90, 0x22892, 0x25F74), // ???
-                        new BlockInfo(0x22900, 0x00ac, 0x229AE, 0x25F76), // Online Records
-                        new BlockInfo(0x22A00, 0x0850, 0x23252, 0x25F78), // Entralink Forest pokémon data (60d)
-                        new BlockInfo(0x23300, 0x0284, 0x23586, 0x25F7A), // ???
-                        new BlockInfo(0x23600, 0x0010, 0x23612, 0x25F7C), // ???
-                        new BlockInfo(0x23700, 0x00a8, 0x237AA, 0x25F7E), // ???
-                        new BlockInfo(0x23800, 0x016c, 0x2396E, 0x25F80), // ???
-                        new BlockInfo(0x23A00, 0x0080, 0x23A82, 0x25F82), // ???
-                        new BlockInfo(0x23B00, 0x00fc, 0x23BFE, 0x25F84), // Hollow/Rival Block
-                        new BlockInfo(0x23C00, 0x16a8, 0x252AA, 0x25F86), // Join Avenue Block
-                        new BlockInfo(0x25300, 0x0498, 0x2579A, 0x25F88), // Medal data
-                        new BlockInfo(0x25800, 0x0060, 0x25862, 0x25F8A), // Key-related data
-                        new BlockInfo(0x25900, 0x00fc, 0x259FE, 0x25F8C), // (70d)
-                        new BlockInfo(0x25A00, 0x03e4, 0x25DE6, 0x25F8E), // ???
-                        new BlockInfo(0x25E00, 0x00f0, 0x25EF2, 0x25F90), // ???
-                        new BlockInfo(0x25F00, 0x0094, 0x25FA2, 0x25FA2), // Checksum Block (73d)
-                    };
-                    break;
-                default:
-                    Blocks = new BlockInfo[] { };
-                    break;
-            }
-        }
-        protected override void SetChecksums()
-        {
-            // Check for invalid block lengths
-            if (Blocks.Length < 3) // arbitrary...
-            {
-                Debug.WriteLine("Not enough blocks ({0}), aborting SetChecksums", Blocks.Length);
-                return;
-            }
-            // Apply checksums
-            foreach (BlockInfo b in Blocks)
-            {
-                byte[] array = Data.Skip(b.Offset).Take(b.Length).ToArray();
-                ushort chk = SaveUtil.CRC16_CCITT(array);
-                BitConverter.GetBytes(chk).CopyTo(Data, b.ChecksumOffset);
-                BitConverter.GetBytes(chk).CopyTo(Data, b.ChecksumMirror);
-            }
-        }
-        public override bool ChecksumsValid
-        {
-            get
-            {
-                // Check for invalid block lengths
-                if (Blocks.Length < 3) // arbitrary...
-                {
-                    Debug.WriteLine("Not enough blocks ({0}), aborting SetChecksums", Blocks.Length);
-                    return false;
-                }
-
-                foreach (BlockInfo b in Blocks)
-                {
-                    byte[] array = Data.Skip(b.Offset).Take(b.Length).ToArray();
-                    ushort chk = SaveUtil.CRC16_CCITT(array);
-                    if (chk != BitConverter.ToUInt16(Data, b.ChecksumOffset))
-                        return false;
-                    if (chk != BitConverter.ToUInt16(Data, b.ChecksumMirror))
-                        return false;
-                }
-                return true;
-            }
-        }
-        public override string ChecksumInfo
-        {
-            get
-            {
-                // Check for invalid block lengths
-                if (Blocks.Length < 3) // arbitrary...
-                {
-                    Debug.WriteLine("Not enough blocks ({0}), aborting SetChecksums", Blocks.Length);
-                    return "Not a valid save to check.";
-                }
-
-                var list = new List<string>();
-                for (int i = 0; i < Blocks.Length; i++)
-                {
-                    BlockInfo b = Blocks[i];
-                    byte[] array = Data.Skip(b.Offset).Take(b.Length).ToArray();
-                    ushort chk = SaveUtil.CRC16_CCITT(array);
-                    if (chk != BitConverter.ToUInt16(Data, b.ChecksumOffset))
-                        list.Add($"Block {i} has been modified.");
-                    else if (chk != BitConverter.ToUInt16(Data, b.ChecksumMirror))
-                        list.Add($"Block {i} mirror does not match.");
-                }
-                list.Add($"SAV: {Blocks.Length - list.Count}/{Blocks.Length}");
-                return string.Join(Environment.NewLine, list);
-            }
-        }
-        
-        private const int wcSeed = 0x1D290;
-
-        public readonly int CGearInfoOffset, CGearDataOffset;
-        private readonly int Trainer2, AdventureInfo;
-        public readonly int PokeDexLanguageFlags;
-        public override bool HasBoxWallpapers => false;
-
-        // Daycare
-        public override int DaycareSeedSize => 16;
-        public override int GetDaycareSlotOffset(int loc, int slot)
-        {
-            return Daycare + 4 + 0xE4 * slot;
-        }
-        public override string GetDaycareRNGSeed(int loc)
-        {
-            if (Version != GameVersion.B2W2)
-                return null;
-            var data = Data.Skip(Daycare + 0x1CC).Take(DaycareSeedSize/2).Reverse().ToArray();
-            return BitConverter.ToString(data).Replace("-", "");
-        }
-        public override uint? GetDaycareEXP(int loc, int slot)
-        {
-            return BitConverter.ToUInt32(Data, Daycare + 4 + 0xDC + slot * 0xE4);
-        }
-        public override bool? IsDaycareOccupied(int loc, int slot)
-        {
-            return BitConverter.ToUInt32(Data, Daycare + 0xE4*slot) == 1;
-        }
-        public override void SetDaycareEXP(int loc, int slot, uint EXP)
-        {
-            BitConverter.GetBytes(EXP).CopyTo(Data, Daycare + 4 + 0xDC + slot * 0xE4);
-        }
-        public override void SetDaycareOccupied(int loc, int slot, bool occupied)
-        {
-            BitConverter.GetBytes((uint)(occupied ? 1 : 0)).CopyTo(Data, Daycare + 0x1CC);
-        }
-        public override void SetDaycareRNGSeed(int loc, string seed)
-        {
-            if (Version != GameVersion.B2W2)
-                return;
-            Enumerable.Range(0, seed.Length)
-                 .Where(x => x % 2 == 0)
-                 .Select(x => Convert.ToByte(seed.Substring(x, 2), 16))
-                 .Reverse().ToArray().CopyTo(Data, Daycare + 0x1CC);
-        }
-
-        // Inventory
-        private readonly ushort[] LegalItems, LegalKeyItems, LegalTMHMs, LegalMedicine, LegalBerries;
-        public override InventoryPouch[] Inventory
-        {
-            get
-            {
-                InventoryPouch[] pouch =
-                {
-                    new InventoryPouch(InventoryType.Items, LegalItems, 999, OFS_PouchHeldItem),
-                    new InventoryPouch(InventoryType.KeyItems, LegalKeyItems, 1, OFS_PouchKeyItem),
-                    new InventoryPouch(InventoryType.TMHMs, LegalTMHMs, 1, OFS_PouchTMHM),
-                    new InventoryPouch(InventoryType.Medicine, LegalMedicine, 999, OFS_PouchMedicine),
-                    new InventoryPouch(InventoryType.Berries, LegalBerries, 999, OFS_PouchBerry),
-                };
-                foreach (var p in pouch)
-                    p.GetPouch(ref Data);
-                return pouch;
-            }
-            set
-            {
-                foreach (var p in value)
-                    p.SetPouch(ref Data);
-            }
-        }
-
-        // Storage
-        public override int PartyCount
-        {
-            get => Data[Party + 4];
-            protected set => Data[Party + 4] = (byte)value;
-        }
-        public override int GetBoxOffset(int box)
-        {
-            return Box + SIZE_STORED * box * 30 + box * 0x10;
-        }
-        public override int GetPartyOffset(int slot)
-        {
-            return Party + 8 + SIZE_PARTY*slot;
-        }
-        public override string GetBoxName(int box)
-        {
-            if (box >= BoxCount)
-                return "";
-            return StringConverter.TrimFromFFFF(Encoding.Unicode.GetString(Data, PCLayout + 0x28 * box + 4, 0x28));
-        }
-        public override void SetBoxName(int box, string val)
-        {
-            if (val.Length > 38)
-                return;
-            val += '\uFFFF';
-            Encoding.Unicode.GetBytes(val.PadRight(0x14, '\0')).CopyTo(Data, PCLayout + 0x28 * box + 4);
-            Edited = true;
-        }
-        protected override int GetBoxWallpaperOffset(int box)
-        {
-            return PCLayout + 0x3C4 + box;
-        }
-        public override int CurrentBox
-        {
-            get => Data[PCLayout];
-            set => Data[PCLayout] = (byte)value;
-        }
-        public override bool BattleBoxLocked
-        {
-            get => BattleBox >= 0 && Data[BattleBox + 0x358] != 0; // wifi/live
-            set { }
-        }
-        public override PKM GetPKM(byte[] data)
-        {
-            return new PK5(data);
-        }
-        public override byte[] DecryptPKM(byte[] data)
-        {
-            return PKX.DecryptArray45(data);
-        }
-        
-        // Mystery Gift
-        public override MysteryGiftAlbum GiftAlbum
-        {
-            get
-            {
-                uint seed = BitConverter.ToUInt32(Data, wcSeed);
-                MysteryGiftAlbum Info = new MysteryGiftAlbum { Seed = seed };
-                byte[] wcData = Data.Skip(WondercardData).Take(0xA90).ToArray(); // Encrypted, Decrypt
-                for (int i = 0; i < wcData.Length; i += 2)
-                    BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(wcData, i) ^ PKX.LCRNG(ref seed) >> 16)).CopyTo(wcData, i);
-
-                Info.Flags = new bool[GiftFlagMax];
-                Info.Gifts = new MysteryGift[GiftCountMax];
-                // 0x100 Bytes for Used Flags
-                for (int i = 0; i < GiftFlagMax; i++)
-                    Info.Flags[i] = (wcData[i/8] >> i%8 & 0x1) == 1;
-                // 12 PGFs
-                for (int i = 0; i < Info.Gifts.Length; i++)
-                    Info.Gifts[i] = new PGF(wcData.Skip(0x100 + i*PGF.Size).Take(PGF.Size).ToArray());
-
-                return Info;
-            }
-            set
-            {
-                byte[] wcData = new byte[0xA90];
-
-                // Toss back into byte[]
-                for (int i = 0; i < value.Flags.Length; i++)
-                    if (value.Flags[i])
-                        wcData[i/8] |= (byte)(1 << (i & 7));
-                for (int i = 0; i < value.Gifts.Length; i++)
-                    value.Gifts[i].Data.CopyTo(wcData, 0x100 + i*PGF.Size);
-
-                // Decrypted, Encrypt
-                uint seed = value.Seed;
-                for (int i = 0; i < wcData.Length; i += 2)
-                    BitConverter.GetBytes((ushort)(BitConverter.ToUInt16(wcData, i) ^ PKX.LCRNG(ref seed) >> 16)).CopyTo(wcData, i);
-
-                // Write Back
-                wcData.CopyTo(Data, WondercardData);
-                BitConverter.GetBytes(value.Seed).CopyTo(Data, wcSeed);
-            }
-        }
-        protected override bool[] MysteryGiftReceivedFlags { get => null; set { } }
-        protected override MysteryGift[] MysteryGiftCards { get => new MysteryGift[0]; set { } }
-        
-        // Trainer Info
-        public override string OT
-        {
-            get => GetString(Trainer1 + 0x4, 16);
-            set => SetString(value, OTLength).CopyTo(Data, Trainer1 + 0x4);
-        }
-        public override ushort TID
-        {
-            get => BitConverter.ToUInt16(Data, Trainer1 + 0x14 + 0);
-            set => BitConverter.GetBytes(value).CopyTo(Data, Trainer1 + 0x14 + 0);
-        }
-        public override ushort SID
-        {
-            get => BitConverter.ToUInt16(Data, Trainer1 + 0x14 + 2);
-            set => BitConverter.GetBytes(value).CopyTo(Data, Trainer1 + 0x14 + 2);
-        }
-        public override uint Money
-        {
-            get => BitConverter.ToUInt32(Data, Trainer2);
-            set => BitConverter.GetBytes(value).CopyTo(Data, Trainer2);
-        }
-        public override int Gender
-        {
-            get => Data[Trainer1 + 0x21];
-            set => Data[Trainer1 + 0x21] = (byte)value;
-        }
-        public override int Language
-        {
-            get => Data[Trainer1 + 0x1E];
-            set => Data[Trainer1 + 0x1E] = (byte)value;
-        }
-        public override int Game
-        {
-            get => Data[Trainer1 + 0x1F];
-            set => Data[Trainer1 + 0x1F] = (byte)value;
-        }
-        public int Badges
-        {
-            get => Data[Trainer2 + 0x4];
-            set => Data[Trainer2 + 0x4] = (byte)value;
-        }
-        public int M
-        {
-            get => BitConverter.ToInt32(Data, Trainer1 + 0x180);
-            set => BitConverter.GetBytes((ushort)value).CopyTo(Data, Trainer1 + 0x180);
-        }
-        public int X
-        {
-            get => BitConverter.ToUInt16(Data, Trainer1 + 0x186);
-            set => BitConverter.GetBytes((ushort)value).CopyTo(Data, Trainer1 + 0x186);
-        }
-        public int Z
-        {
-            get => BitConverter.ToUInt16(Data, Trainer1 + 0x18A);
-            set => BitConverter.GetBytes((ushort)value).CopyTo(Data, Trainer1 + 0x18A);
-        }
-        public int Y
-        {
-            get => BitConverter.ToUInt16(Data, Trainer1 + 0x18E);
-            set => BitConverter.GetBytes((ushort)value).CopyTo(Data, Trainer1 + 0x18E);
-        }
-
-        public override int PlayedHours
-        {
-            get => BitConverter.ToUInt16(Data, Trainer1 + 0x24);
-            set => BitConverter.GetBytes((ushort)value).CopyTo(Data, Trainer1 + 0x24);
-        }
-        public override int PlayedMinutes
-        {
-            get => Data[Trainer1 + 0x24 + 2];
-            set => Data[Trainer1 + 0x24 + 2] = (byte)value;
-        }
-        public override int PlayedSeconds
-        {
-            get => Data[Trainer1 + 0x24 + 3];
-            set => Data[Trainer1 + 0x24 + 3] = (byte)value;
-        }
-        public override int SecondsToStart { get => BitConverter.ToInt32(Data, AdventureInfo + 0x34); set => BitConverter.GetBytes(value).CopyTo(Data, AdventureInfo + 0x34); }
-        public override int SecondsToFame { get => BitConverter.ToInt32(Data, AdventureInfo + 0x3C); set => BitConverter.GetBytes(value).CopyTo(Data, AdventureInfo + 0x3C); }
-
-        protected override void SetDex(PKM pkm)
-        {
-            if (pkm.Species == 0)
-                return;
-            if (pkm.Species > MaxSpeciesID)
-                return;
-            if (Version == GameVersion.Unknown)
-                return;
-            if (PokeDex < 0)
-                return;
-
-            const int brSize = 0x54;
-            int bit = pkm.Species - 1;
-            int gender = pkm.Gender % 2; // genderless -> male
-            int shiny = pkm.IsShiny ? 1 : 0;
-            int shift = shiny*2 + gender + 1;
-            int shiftoff = shiny * brSize * 2 + gender * brSize + brSize;
-            int ofs = PokeDex + 0x8 + (bit >> 3);
-
-            // Set the Species Owned Flag
-            Data[ofs + brSize*0] |= (byte)(1 << (bit % 8));
-
-            // Set the [Species/Gender/Shiny] Seen Flag
-            Data[PokeDex + 0x8 + shiftoff + bit / 8] |= (byte)(1 << (bit&7));
-
-            // Set the Display flag if none are set
-            bool Displayed = false;
-            Displayed |= (Data[ofs + brSize*5] & (byte)(1 << (bit&7))) != 0;
-            Displayed |= (Data[ofs + brSize*6] & (byte)(1 << (bit&7))) != 0;
-            Displayed |= (Data[ofs + brSize*7] & (byte)(1 << (bit&7))) != 0;
-            Displayed |= (Data[ofs + brSize*8] & (byte)(1 << (bit&7))) != 0;
-            if (!Displayed) // offset is already biased by brSize, reuse shiftoff but for the display flags.
-                Data[ofs + brSize*(shift + 4)] |= (byte)(1 << (bit&7));
-
-            // Set the Language
-            if (bit < 493) // shifted by 1, Gen5 species do not have international language bits
-            {
-                int lang = pkm.Language - 1; if (lang > 5) lang--; // 0-6 language vals
-                if (lang < 0) lang = 1;
-                Data[PokeDexLanguageFlags + ((bit*7 + lang)>>3)] |= (byte)(1 << ((bit*7 + lang) & 7));
-            }
-
-            // Formes
-            int fc = Personal[pkm.Species].FormeCount;
-            int f = B2W2 ? SaveUtil.GetDexFormIndexB2W2(pkm.Species, fc) : SaveUtil.GetDexFormIndexBW(pkm.Species, fc);
-            if (f < 0) return;
-
-            int FormLen = B2W2 ? 0xB : 0x9;
-            int FormDex = PokeDex + 0x8 + brSize*9;
-            bit = f + pkm.AltForm;
-
-            // Set Form Seen Flag
-            Data[FormDex + FormLen*shiny + (bit>>3)] |= (byte)(1 << (bit&7));
-
-            // Set Displayed Flag if necessary, check all flags
-            for (int i = 0; i < fc; i++)
-            {
-                bit = f + i;
-                if ((Data[FormDex + FormLen*2 + (bit>>3)] & (byte)(1 << (bit&7))) != 0) // Nonshiny
-                    return; // already set
-                if ((Data[FormDex + FormLen*3 + (bit>>3)] & (byte)(1 << (bit&7))) != 0) // Shiny
-                    return; // already set
-            }
-            bit = f + pkm.AltForm;
-            Data[FormDex + FormLen * (2 + shiny) + (bit>>3)] |= (byte)(1 << (bit&7));
-        }
-
-        public override bool GetCaught(int species)
-        {
-            int bit = species - 1;
-            int bd = bit >> 3; // div8
-            int bm = bit & 7; // mod8
-            int ofs = PokeDex // Raw Offset
-                      + 0x08; // Magic + Flags
-            return (1 << bm & Data[ofs + bd]) != 0;
-        }
-        public override bool GetSeen(int species)
-        {
-            const int brSize = 0x54;
-
-            int bit = species - 1;
-            int bd = bit >> 3; // div8
-            int bm = bit & 7; // mod8
-            int ofs = PokeDex // Raw Offset
-                      + 0x08; // Magic + Flags
-
-            for (int i = 1; i <= 4; i++)
-                if ((1 << bm & Data[ofs + bd + i * brSize]) != 0)
-                    return true;
-            return false;
-        }
-
-        public override string GetString(int Offset, int Count) => StringConverter.GetString5(Data, Offset, Count);
-        public override byte[] SetString(string value, int maxLength, int PadToSize = 0, ushort PadWith = 0)
-        {
-            if (PadToSize == 0)
-                PadToSize = maxLength + 1;
-            return StringConverter.SetString5(value, maxLength, PadToSize, PadWith);
-        }
+        Initialize();
+        ClearBoxes();
     }
+
+    protected SAV5(Memory<byte> data) : base(data)
+    {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        Box = 0x400;
+        Party = 0x18E00;
+    }
+
+    // Blocks & Offsets
+    protected override void SetChecksums() => AllBlocks.SetChecksums(Data);
+    public override bool ChecksumsValid => AllBlocks.GetChecksumsValid(Data);
+    public override string ChecksumInfo => AllBlocks.GetChecksumInfo(Data);
+
+    public sealed override bool HasPokeDex => true;
+
+    // Daycare
+    public int DaycareSlotCount => 2;
+    public Memory<byte> GetDaycareSlot(int slot) => Daycare.GetDaycareSlot(slot);
+    public bool IsDaycareOccupied(int slot) => Daycare.IsDaycareOccupied(slot);
+    public uint GetDaycareEXP(int slot) => Daycare.GetDaycareEXP(slot);
+    public void SetDaycareEXP(int slot, uint value) => Daycare.SetDaycareEXP(slot, value);
+    public void SetDaycareOccupied(int slot, bool occupied) => Daycare.SetDaycareOccupied(slot, occupied);
+    public bool IsEggAvailable { get => Daycare.IsEggAvailable; set => Daycare.IsEggAvailable = value; }
+    ulong IDaycareRandomState<ulong>.Seed { get => Daycare.Seed; set => Daycare.Seed = value; }
+
+    // Storage
+    public override int PartyCount
+    {
+        get => Data[Party + 4];
+        protected set => Data[Party + 4] = (byte)value;
+    }
+
+    public override int GetBoxOffset(int box) => Box + (SIZE_STORED * box * 30) + (box * 0x10);
+    public override int GetPartyOffset(int slot) => Party + 8 + (SIZE_PARTY * slot);
+
+    public override int BoxesUnlocked { get => BoxLayout.BoxesUnlocked; set => BoxLayout.BoxesUnlocked = (byte)value; }
+    public int GetBoxWallpaper(int box) => BoxLayout.GetBoxWallpaper(box);
+    public void SetBoxWallpaper(int box, int value) => BoxLayout.SetBoxWallpaper(box, value);
+    public string GetBoxName(int box) => BoxLayout[box];
+    public void SetBoxName(int box, ReadOnlySpan<char> value) => BoxLayout.SetBoxName(box, value);
+    public override int CurrentBox { get => BoxLayout.CurrentBox; set => BoxLayout.CurrentBox = value; }
+
+    protected override void SetPKM(PKM pk, bool isParty = false)
+    {
+        var pk5 = (PK5)pk;
+        // Apply to this Save File
+        pk5.UpdateHandler(this);
+        pk5.RefreshChecksum();
+    }
+
+    // Player Data
+    public override string OT { get => PlayerData.OT; set => PlayerData.OT = value; }
+    public override uint ID32 { get => PlayerData.ID32; set => PlayerData.ID32 = value; }
+    public override ushort TID16 { get => PlayerData.TID16; set => PlayerData.TID16 = value; }
+    public override ushort SID16 { get => PlayerData.SID16; set => PlayerData.SID16 = value; }
+    public int Country { get => PlayerData.Country; set => PlayerData.Country = value; }
+    public int Region { get => PlayerData.Region; set => PlayerData.Region = value; }
+    public override int Language { get => PlayerData.Language; set => PlayerData.Language = value; }
+    public override GameVersion Version { get => (GameVersion)PlayerData.Game; set => PlayerData.Game = (byte)value; }
+    public override byte Gender { get => PlayerData.Gender; set => PlayerData.Gender = value; }
+    public override int PlayedHours { get => PlayerData.PlayedHours; set => PlayerData.PlayedHours = value; }
+    public override int PlayedMinutes { get => PlayerData.PlayedMinutes; set => PlayerData.PlayedMinutes = value; }
+    public override int PlayedSeconds { get => PlayerData.PlayedSeconds; set => PlayerData.PlayedSeconds = value; }
+    public override uint Money { get => Misc.Money; set => Misc.Money = value; }
+    public override uint SecondsToStart { get => (uint)AdventureInfo.SecondsToStart; set => AdventureInfo.SecondsToStart = value; }
+    public override uint SecondsToFame  { get => (uint)AdventureInfo.SecondsToFame; set => AdventureInfo.SecondsToFame  = value; }
+
+    protected override void SetDex(PKM pk) => Zukan.SetDex(pk);
+    public override bool GetCaught(ushort species) => Zukan.GetCaught(species);
+    public override bool GetSeen(ushort species) => Zukan.GetSeen(species);
+
+    public sealed override string GetString(ReadOnlySpan<byte> data)
+        => StringConverter5.GetString(data);
+    public sealed override int LoadString(ReadOnlySpan<byte> data, Span<char> result)
+        => StringConverter5.LoadString(data, result);
+    public sealed override int SetString(Span<byte> destBuffer, ReadOnlySpan<char> value, int maxLength, StringConverterOption option)
+        => StringConverter5.SetString(destBuffer, value, maxLength, Language, option);
+
+    public abstract IReadOnlyList<BlockInfo> AllBlocks { get; }
+    public abstract MyItem Items { get; }
+    public abstract Zukan5 Zukan { get; }
+    public abstract Misc5 Misc { get; }
+    public abstract MysteryBlock5 Mystery { get; }
+    public abstract Chatter5 Chatter { get; }
+    public abstract Daycare5 Daycare { get; }
+    public abstract BoxLayout5 BoxLayout { get; }
+    public abstract PlayerData5 PlayerData { get; }
+    public abstract PlayerPosition5 PlayerPosition { get; }
+    public abstract BattleSubwayPlay5 BattleSubwayPlay { get; }
+    public abstract BattleSubway5 BattleSubway { get; }
+    public abstract Entralink5 Entralink { get; }
+    public abstract Musical5 Musical { get; }
+    public abstract Encount5 Encount { get; }
+    public abstract UnityTower5 UnityTower { get; }
+    public abstract SkinInfo5 SkinInfo { get; }
+    public abstract EventWork5 EventWork { get; }
+    public abstract BattleBox5 BattleBox { get; }
+    public abstract EntreeForest EntreeForest { get; }
+    public abstract GlobalLink5 GlobalLink { get; }
+    public abstract WhiteBlack5 Forest { get; }
+    public abstract GTS5 GTS { get; }
+    public abstract AdventureInfo5 AdventureInfo { get; }
+    public abstract Record5 Records { get; }
+    IEventFlag37 IEventFlagProvider37.EventWork => EventWork;
+
+    protected override Memory<byte> GetFinalData()
+    {
+        EntreeForest.EndAccess();
+        Mystery.EndAccess();
+        return base.GetFinalData();
+    }
+
+    public static int GetMailOffset(int index) => (index * Mail5.SIZE) + 0x1DD00;
+    public byte[] GetMailData(int offset) => Data.Slice(offset, Mail5.SIZE).ToArray();
+
+    public MailDetail GetMail(int mailIndex)
+    {
+        int ofs = GetMailOffset(mailIndex);
+        var data = GetMailData(ofs);
+        return new Mail5(data, ofs);
+    }
+
+    IMysteryGiftStorage IMysteryGiftStorageProvider.MysteryGiftStorage => Mystery;
+    protected abstract int ExtBattleVideoNativeOffset { get; }
+    protected abstract int ExtBattleVideoDownload1Offset { get; }
+    protected abstract int ExtBattleVideoDownload2Offset { get; }
+    protected abstract int ExtBattleVideoDownload3Offset { get; }
+    protected abstract int ExtCGearOffset { get; }
+    protected abstract int ExtBattleTestOffset { get; }
+    protected abstract int ExtMusicalDownloadOffset { get; }
+    protected abstract int ExtPokeDexSkinOffset { get; }
+    protected abstract int ExtHallOfFame1Offset { get; }
+    protected abstract int ExtHallOfFame2Offset { get; }
+    protected abstract int ExtLink1Offset { get; }
+    protected abstract int ExtLink2Offset { get; }
+
+    /// <summary> Variable sized NARC download depending on the game (B/W vs B2/W2). </summary>
+    public abstract int MusicalDownloadSize { get; }
+    public const int HallOfFameSize = 0x155C;
+    private const int Link3DSDataSize = 0x400;
+
+    public Memory<byte> BattleVideoNative => Buffer.Slice(ExtBattleVideoNativeOffset, BattleVideo5.SIZE);
+    public Memory<byte> BattleVideoDownload1 => Buffer.Slice(ExtBattleVideoDownload1Offset, BattleVideo5.SIZE);
+    public Memory<byte> BattleVideoDownload2 => Buffer.Slice(ExtBattleVideoDownload2Offset, BattleVideo5.SIZE);
+    public Memory<byte> BattleVideoDownload3 => Buffer.Slice(ExtBattleVideoDownload3Offset, BattleVideo5.SIZE);
+    public Memory<byte> CGearSkinData => Buffer.Slice(ExtCGearOffset, CGearBackground.SIZE);
+    public Memory<byte> BattleTest => Buffer.Slice(ExtBattleTestOffset, BattleTest5.SIZE);
+    public Memory<byte> MusicalDownloadData => Buffer.Slice(ExtMusicalDownloadOffset, MusicalDownloadSize);
+    public Memory<byte> PokedexSkinData => Buffer.Slice(ExtPokeDexSkinOffset, PokeDexSkin5.SIZE);
+    public Memory<byte> HallOfFame1 => Buffer.Slice(ExtHallOfFame1Offset, HallOfFameSize);
+    public Memory<byte> HallOfFame2 => Buffer.Slice(ExtHallOfFame2Offset, HallOfFameSize);
+    public Memory<byte> Link1Data => Buffer.Slice(ExtLink1Offset, Link3DSDataSize);
+    public Memory<byte> Link2Data => Buffer.Slice(ExtLink2Offset, Link3DSDataSize);
+
+    private const int ExtFooterLength = 0x14;
+
+    /// <summary>
+    /// Writes an extdata section
+    /// </summary>
+    /// <param name="data">Section of data to write</param>
+    /// <param name="offset">Offset within the save file to write to</param>
+    /// <param name="size">Expected size of the data</param>
+    /// <param name="count">Update count</param>
+    /// <returns>Checksum of the <see cref="data"/></returns>
+    protected ushort WriteExtSection(ReadOnlySpan<byte> data, int offset, int size, ushort count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(data.Length, size);
+        SetData(data, offset);
+
+        return RefreshExtSectionFooter(offset, size, count);
+    }
+
+    private ushort RefreshExtSectionFooter(int offset, int size, ushort count)
+    {
+        var data = Data.Slice(offset, size);
+
+        // Update Tail Section
+        ushort chk = Checksums.CRC16_CCITT(data);
+        var tail = Data[(offset + size)..];
+        WriteUInt16LittleEndian(tail, count); // block updated counter
+        WriteUInt16LittleEndian(tail[2..], chk); // checksum
+
+        // Update Footer
+        int lengthInner = size + 0x100 - (size % 0x100); // wasting 0x100 bytes, nice!
+        var footer = Data.Slice(offset + lengthInner, ExtFooterLength);
+        WriteFooterDLC(footer, chk, lengthInner + ExtFooterLength, count);
+        return chk;
+    }
+
+    private static void WriteFooterDLC(Span<byte> data, ushort chk, int length, ushort count)
+    {
+        WriteInt32LittleEndian(data, chk);
+        chk = Checksums.CRC16_CCITT(data[..4]); // checksum of a checksum
+        WriteFooter51(data[4..], chk, length, count);
+    }
+
+    private static void WriteFooter51(Span<byte> data, ushort chk, int length, ushort count)
+    {
+        WriteInt32LittleEndian(data, count);
+        WriteInt32LittleEndian(data[0x04..], length);
+        WriteInt32LittleEndian(data[0x08..], 0x31053527); // '5.1 magic prime 822424871
+
+        WriteUInt16LittleEndian(data[0x0C..], 0);
+        WriteUInt16LittleEndian(data[0x0E..], chk);
+    }
+
+    public void SetBattleVideo(int index, ReadOnlySpan<byte> data, ushort count = 1)
+    {
+        PlayerData.UpdateExtData(ExtDataSectionNote5.BattleVideo0 + index, count);
+        var offset = index switch
+        {
+            0 => ExtBattleVideoNativeOffset,
+            1 => ExtBattleVideoDownload1Offset,
+            2 => ExtBattleVideoDownload2Offset,
+            3 => ExtBattleVideoDownload3Offset,
+            _ => throw new ArgumentOutOfRangeException(nameof(index)),
+        };
+        WriteExtSection(data, offset, BattleVideo5.SIZE, count);
+    }
+
+    public Memory<byte> GetBattleVideo(int index) => index switch
+    {
+        0 => BattleVideoNative,
+        1 => BattleVideoDownload1,
+        2 => BattleVideoDownload2,
+        3 => BattleVideoDownload3,
+        _ => throw new ArgumentOutOfRangeException(nameof(index)),
+    };
+
+    public void SetCGearSkin(ReadOnlySpan<byte> data, ushort count = 1)
+    {
+        var chk = WriteExtSection(data, ExtCGearOffset, CGearBackground.SIZE, count);
+
+        // Indicate in the save file that data is present
+        SkinInfo.CGearSkinChecksum = chk;
+        SkinInfo.HasCGearSkin = true;
+        PlayerData.UpdateExtData(ExtDataSectionNote5.CGearSkin, count);
+    }
+
+    public void SetBattleTest(ReadOnlySpan<byte> data, ushort count = 1)
+    {
+        WriteExtSection(data, ExtBattleTestOffset, BattleTest5.SIZE, count);
+        PlayerData.UpdateExtData(ExtDataSectionNote5.BattleTest, count);
+    }
+
+    public void SetMusical(ReadOnlySpan<byte> data, ushort count = 1)
+    {
+        WriteExtSection(data, ExtMusicalDownloadOffset, MusicalDownloadSize, count);
+        PlayerData.UpdateExtData(ExtDataSectionNote5.Musical, count);
+        Musical.IsAvailableMusicalDLC = true;
+    }
+
+    public void SetPokeDexSkin(ReadOnlySpan<byte> data, ushort count = 1)
+    {
+        WriteExtSection(data, ExtPokeDexSkinOffset, PokeDexSkin5.SIZE, count);
+        IsAvailablePokedexSkin = true; // checksum might be changed via this, need to refresh footer to be safe
+        RefreshExtSectionFooter(ExtPokeDexSkinOffset, PokeDexSkin5.SIZE, count);
+        PlayerData.UpdateExtData(ExtDataSectionNote5.PokedexSkin, count);
+    }
+
+    private Span<byte> DexSkinFooter => Data.Slice(ExtPokeDexSkinOffset + PokeDexSkin5.SIZE - 4, 4);
+
+    public bool IsAvailablePokedexSkin
+    {
+        get => ReadUInt32LittleEndian(DexSkinFooter) == 1;
+        set => WriteUInt32LittleEndian(DexSkinFooter, value ? 1u : 0u);
+    }
+
+    public void SetHallOfFame(ReadOnlySpan<byte> data, ushort count = 1)
+    {
+        WriteExtSection(data, ExtHallOfFame1Offset, HallOfFameSize, count);
+        PlayerData.UpdateExtData(ExtDataSectionNote5.HallOfFame, count);
+    }
+
+    public void SetLink1Data(ReadOnlySpan<byte> data) => SetData(data, ExtLink1Offset);
+    public void SetLink2Data(ReadOnlySpan<byte> data) => SetData(data, ExtLink2Offset);
 }

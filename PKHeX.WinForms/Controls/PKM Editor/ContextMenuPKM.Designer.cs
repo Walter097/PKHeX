@@ -1,4 +1,4 @@
-﻿namespace PKHeX.WinForms.Controls
+namespace PKHeX.WinForms.Controls
 {
     partial class ContextMenuPKM
     {
@@ -28,50 +28,53 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.mnuL = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnuLLegality = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuLQR = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuLSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuL.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            mnuL = new System.Windows.Forms.ContextMenuStrip(components);
+            mnuLLegality = new System.Windows.Forms.ToolStripMenuItem();
+            mnuLQR = new System.Windows.Forms.ToolStripMenuItem();
+            mnuLSave = new System.Windows.Forms.ToolStripMenuItem();
+            mnuL.SuspendLayout();
+            SuspendLayout();
             // 
             // mnuL
             // 
-            this.mnuL.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuLLegality,
-            this.mnuLQR,
-            this.mnuLSave});
-            this.mnuL.Name = "mnuL";
-            this.mnuL.Size = new System.Drawing.Size(122, 70);
+            mnuL.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            mnuLLegality,
+            mnuLQR,
+            mnuLSave});
+            mnuL.Name = "mnuL";
+            mnuL.Size = new System.Drawing.Size(153, 92);
             // 
             // mnuLLegality
             // 
-            this.mnuLLegality.Name = "mnuLLegality";
-            this.mnuLLegality.Size = new System.Drawing.Size(121, 22);
-            this.mnuLLegality.Text = "Legality";
-            this.mnuLLegality.Click += new System.EventHandler(this.ClickShowLegality);
+            mnuLLegality.Image = global::PKHeX.WinForms.Properties.Resources.export;
+            mnuLLegality.Name = "mnuLLegality";
+            mnuLLegality.Size = new System.Drawing.Size(152, 22);
+            mnuLLegality.Text = "Legality";
+            mnuLLegality.Click += new System.EventHandler(ClickShowLegality);
             // 
             // mnuLQR
             // 
-            this.mnuLQR.Name = "mnuLQR";
-            this.mnuLQR.Size = new System.Drawing.Size(121, 22);
-            this.mnuLQR.Text = "QR!";
-            this.mnuLQR.Click += new System.EventHandler(this.ClickShowQR);
+            mnuLQR.Image = global::PKHeX.WinForms.Properties.Resources.qr;
+            mnuLQR.Name = "mnuLQR";
+            mnuLQR.Size = new System.Drawing.Size(152, 22);
+            mnuLQR.Text = "QR!";
+            mnuLQR.Click += new System.EventHandler(ClickShowQR);
             // 
             // mnuLSave
             // 
-            this.mnuLSave.Name = "mnuLSave";
-            this.mnuLSave.Size = new System.Drawing.Size(121, 22);
-            this.mnuLSave.Text = "Save as...";
-            this.mnuLSave.Click += new System.EventHandler(this.ClickSaveAs);
+            mnuLSave.Image = global::PKHeX.WinForms.Properties.Resources.savePKM;
+            mnuLSave.Name = "mnuLSave";
+            mnuLSave.Size = new System.Drawing.Size(152, 22);
+            mnuLSave.Text = "Save as...";
+            mnuLSave.Click += new System.EventHandler(ClickSaveAs);
             // 
             // ContextMenuPKM
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-            this.Name = "ContextMenuPKM";
-            this.mnuL.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            Name = "ContextMenuPKM";
+            mnuL.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 

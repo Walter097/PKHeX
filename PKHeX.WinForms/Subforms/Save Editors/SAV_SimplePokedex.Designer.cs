@@ -1,4 +1,4 @@
-﻿namespace PKHeX.WinForms
+namespace PKHeX.WinForms
 {
     partial class SAV_SimplePokedex
     {
@@ -28,139 +28,178 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_SimplePokedex));
-            this.B_Save = new System.Windows.Forms.Button();
-            this.B_Cancel = new System.Windows.Forms.Button();
-            this.B_CaughtNone = new System.Windows.Forms.Button();
-            this.B_CaughtAll = new System.Windows.Forms.Button();
-            this.B_SeenNone = new System.Windows.Forms.Button();
-            this.B_SeenAll = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.CLB_Caught = new System.Windows.Forms.CheckedListBox();
-            this.Label_Seen = new System.Windows.Forms.Label();
-            this.CLB_Seen = new System.Windows.Forms.CheckedListBox();
-            this.SuspendLayout();
+            B_Save = new System.Windows.Forms.Button();
+            B_Cancel = new System.Windows.Forms.Button();
+            B_CaughtNone = new System.Windows.Forms.Button();
+            B_CaughtAll = new System.Windows.Forms.Button();
+            B_SeenNone = new System.Windows.Forms.Button();
+            B_SeenAll = new System.Windows.Forms.Button();
+            Label_Caught = new System.Windows.Forms.Label();
+            CLB_Caught = new System.Windows.Forms.CheckedListBox();
+            Label_Seen = new System.Windows.Forms.Label();
+            CLB_Seen = new System.Windows.Forms.CheckedListBox();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            tableLayoutPanel1.SuspendLayout();
+            SuspendLayout();
             // 
             // B_Save
             // 
-            this.B_Save.Location = new System.Drawing.Point(146, 301);
-            this.B_Save.Name = "B_Save";
-            this.B_Save.Size = new System.Drawing.Size(85, 23);
-            this.B_Save.TabIndex = 19;
-            this.B_Save.Text = "Save";
-            this.B_Save.UseVisualStyleBackColor = true;
-            this.B_Save.Click += new System.EventHandler(this.B_Save_Click);
+            B_Save.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            B_Save.Location = new System.Drawing.Point(196, 365);
+            B_Save.Margin = new System.Windows.Forms.Padding(4);
+            B_Save.Name = "B_Save";
+            B_Save.Size = new System.Drawing.Size(120, 32);
+            B_Save.TabIndex = 19;
+            B_Save.Text = "Save";
+            B_Save.UseVisualStyleBackColor = true;
+            B_Save.Click += B_Save_Click;
             // 
             // B_Cancel
             // 
-            this.B_Cancel.Location = new System.Drawing.Point(53, 301);
-            this.B_Cancel.Name = "B_Cancel";
-            this.B_Cancel.Size = new System.Drawing.Size(85, 23);
-            this.B_Cancel.TabIndex = 18;
-            this.B_Cancel.Text = "Cancel";
-            this.B_Cancel.UseVisualStyleBackColor = true;
-            this.B_Cancel.Click += new System.EventHandler(this.B_Cancel_Click);
+            B_Cancel.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            B_Cancel.Location = new System.Drawing.Point(68, 365);
+            B_Cancel.Margin = new System.Windows.Forms.Padding(4);
+            B_Cancel.Name = "B_Cancel";
+            B_Cancel.Size = new System.Drawing.Size(120, 32);
+            B_Cancel.TabIndex = 18;
+            B_Cancel.Text = "Cancel";
+            B_Cancel.UseVisualStyleBackColor = true;
+            B_Cancel.Click += B_Cancel_Click;
             // 
             // B_CaughtNone
             // 
-            this.B_CaughtNone.Location = new System.Drawing.Point(151, 267);
-            this.B_CaughtNone.Name = "B_CaughtNone";
-            this.B_CaughtNone.Size = new System.Drawing.Size(120, 23);
-            this.B_CaughtNone.TabIndex = 17;
-            this.B_CaughtNone.Text = "Caught None";
-            this.B_CaughtNone.UseVisualStyleBackColor = true;
-            this.B_CaughtNone.Click += new System.EventHandler(this.B_CaughtNone_Click);
+            B_CaughtNone.Dock = System.Windows.Forms.DockStyle.Fill;
+            B_CaughtNone.Location = new System.Drawing.Point(196, 325);
+            B_CaughtNone.Margin = new System.Windows.Forms.Padding(4);
+            B_CaughtNone.Name = "B_CaughtNone";
+            B_CaughtNone.Size = new System.Drawing.Size(184, 32);
+            B_CaughtNone.TabIndex = 17;
+            B_CaughtNone.Text = "Caught None";
+            B_CaughtNone.UseVisualStyleBackColor = true;
+            B_CaughtNone.Click += B_CaughtNone_Click;
             // 
             // B_CaughtAll
             // 
-            this.B_CaughtAll.Location = new System.Drawing.Point(151, 238);
-            this.B_CaughtAll.Name = "B_CaughtAll";
-            this.B_CaughtAll.Size = new System.Drawing.Size(120, 23);
-            this.B_CaughtAll.TabIndex = 16;
-            this.B_CaughtAll.Text = "Caught All";
-            this.B_CaughtAll.UseVisualStyleBackColor = true;
-            this.B_CaughtAll.Click += new System.EventHandler(this.B_CaughtAll_Click);
+            B_CaughtAll.Dock = System.Windows.Forms.DockStyle.Fill;
+            B_CaughtAll.Location = new System.Drawing.Point(196, 285);
+            B_CaughtAll.Margin = new System.Windows.Forms.Padding(4);
+            B_CaughtAll.Name = "B_CaughtAll";
+            B_CaughtAll.Size = new System.Drawing.Size(184, 32);
+            B_CaughtAll.TabIndex = 16;
+            B_CaughtAll.Text = "Caught All";
+            B_CaughtAll.UseVisualStyleBackColor = true;
+            B_CaughtAll.Click += B_CaughtAll_Click;
             // 
             // B_SeenNone
             // 
-            this.B_SeenNone.Location = new System.Drawing.Point(14, 267);
-            this.B_SeenNone.Name = "B_SeenNone";
-            this.B_SeenNone.Size = new System.Drawing.Size(120, 23);
-            this.B_SeenNone.TabIndex = 15;
-            this.B_SeenNone.Text = "Seen None";
-            this.B_SeenNone.UseVisualStyleBackColor = true;
-            this.B_SeenNone.Click += new System.EventHandler(this.B_SeenNone_Click);
+            B_SeenNone.Dock = System.Windows.Forms.DockStyle.Fill;
+            B_SeenNone.Location = new System.Drawing.Point(4, 325);
+            B_SeenNone.Margin = new System.Windows.Forms.Padding(4);
+            B_SeenNone.Name = "B_SeenNone";
+            B_SeenNone.Size = new System.Drawing.Size(184, 32);
+            B_SeenNone.TabIndex = 15;
+            B_SeenNone.Text = "Seen None";
+            B_SeenNone.UseVisualStyleBackColor = true;
+            B_SeenNone.Click += B_SeenNone_Click;
             // 
             // B_SeenAll
             // 
-            this.B_SeenAll.Location = new System.Drawing.Point(14, 238);
-            this.B_SeenAll.Name = "B_SeenAll";
-            this.B_SeenAll.Size = new System.Drawing.Size(120, 23);
-            this.B_SeenAll.TabIndex = 14;
-            this.B_SeenAll.Text = "Seen All";
-            this.B_SeenAll.UseVisualStyleBackColor = true;
-            this.B_SeenAll.Click += new System.EventHandler(this.B_SeenAll_Click);
+            B_SeenAll.Dock = System.Windows.Forms.DockStyle.Fill;
+            B_SeenAll.Location = new System.Drawing.Point(4, 285);
+            B_SeenAll.Margin = new System.Windows.Forms.Padding(4);
+            B_SeenAll.Name = "B_SeenAll";
+            B_SeenAll.Size = new System.Drawing.Size(184, 32);
+            B_SeenAll.TabIndex = 14;
+            B_SeenAll.Text = "Seen All";
+            B_SeenAll.UseVisualStyleBackColor = true;
+            B_SeenAll.Click += B_SeenAll_Click;
             // 
-            // label2
+            // Label_Caught
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(151, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
-            this.label2.TabIndex = 13;
-            this.label2.Text = "Caught:";
+            Label_Caught.AutoSize = true;
+            Label_Caught.Location = new System.Drawing.Point(196, 4);
+            Label_Caught.Margin = new System.Windows.Forms.Padding(4);
+            Label_Caught.Name = "Label_Caught";
+            Label_Caught.Size = new System.Drawing.Size(52, 17);
+            Label_Caught.TabIndex = 13;
+            Label_Caught.Text = "Caught:";
             // 
             // CLB_Caught
             // 
-            this.CLB_Caught.FormattingEnabled = true;
-            this.CLB_Caught.Location = new System.Drawing.Point(151, 33);
-            this.CLB_Caught.Name = "CLB_Caught";
-            this.CLB_Caught.Size = new System.Drawing.Size(120, 199);
-            this.CLB_Caught.TabIndex = 12;
-            this.CLB_Caught.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CLB_Caught_ItemCheck);
+            CLB_Caught.CheckOnClick = true;
+            CLB_Caught.Dock = System.Windows.Forms.DockStyle.Fill;
+            CLB_Caught.FormattingEnabled = true;
+            CLB_Caught.Location = new System.Drawing.Point(196, 29);
+            CLB_Caught.Margin = new System.Windows.Forms.Padding(4);
+            CLB_Caught.Name = "CLB_Caught";
+            CLB_Caught.Size = new System.Drawing.Size(184, 248);
+            CLB_Caught.TabIndex = 12;
             // 
             // Label_Seen
             // 
-            this.Label_Seen.AutoSize = true;
-            this.Label_Seen.Location = new System.Drawing.Point(14, 13);
-            this.Label_Seen.Name = "Label_Seen";
-            this.Label_Seen.Size = new System.Drawing.Size(35, 13);
-            this.Label_Seen.TabIndex = 11;
-            this.Label_Seen.Text = "Seen:";
+            Label_Seen.AutoSize = true;
+            Label_Seen.Location = new System.Drawing.Point(4, 4);
+            Label_Seen.Margin = new System.Windows.Forms.Padding(4);
+            Label_Seen.Name = "Label_Seen";
+            Label_Seen.Size = new System.Drawing.Size(39, 17);
+            Label_Seen.TabIndex = 11;
+            Label_Seen.Text = "Seen:";
             // 
             // CLB_Seen
             // 
-            this.CLB_Seen.FormattingEnabled = true;
-            this.CLB_Seen.Location = new System.Drawing.Point(14, 33);
-            this.CLB_Seen.Name = "CLB_Seen";
-            this.CLB_Seen.Size = new System.Drawing.Size(120, 199);
-            this.CLB_Seen.TabIndex = 10;
-            this.CLB_Seen.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CLB_Seen_ItemCheck);
+            CLB_Seen.CheckOnClick = true;
+            CLB_Seen.Dock = System.Windows.Forms.DockStyle.Fill;
+            CLB_Seen.FormattingEnabled = true;
+            CLB_Seen.Location = new System.Drawing.Point(4, 29);
+            CLB_Seen.Margin = new System.Windows.Forms.Padding(4);
+            CLB_Seen.Name = "CLB_Seen";
+            CLB_Seen.Size = new System.Drawing.Size(184, 248);
+            CLB_Seen.TabIndex = 10;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(Label_Seen, 0, 0);
+            tableLayoutPanel1.Controls.Add(Label_Caught, 1, 0);
+            tableLayoutPanel1.Controls.Add(B_Save, 1, 4);
+            tableLayoutPanel1.Controls.Add(CLB_Seen, 0, 1);
+            tableLayoutPanel1.Controls.Add(B_Cancel, 0, 4);
+            tableLayoutPanel1.Controls.Add(CLB_Caught, 1, 1);
+            tableLayoutPanel1.Controls.Add(B_SeenNone, 0, 3);
+            tableLayoutPanel1.Controls.Add(B_CaughtNone, 1, 3);
+            tableLayoutPanel1.Controls.Add(B_SeenAll, 0, 2);
+            tableLayoutPanel1.Controls.Add(B_CaughtAll, 1, 2);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.Size = new System.Drawing.Size(384, 401);
+            tableLayoutPanel1.TabIndex = 20;
             // 
             // SAV_SimplePokedex
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 336);
-            this.Controls.Add(this.B_Save);
-            this.Controls.Add(this.B_Cancel);
-            this.Controls.Add(this.B_CaughtNone);
-            this.Controls.Add(this.B_CaughtAll);
-            this.Controls.Add(this.B_SeenNone);
-            this.Controls.Add(this.B_SeenAll);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.CLB_Caught);
-            this.Controls.Add(this.Label_Seen);
-            this.Controls.Add(this.CLB_Seen);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(300, 375);
-            this.MinimumSize = new System.Drawing.Size(300, 375);
-            this.Name = "SAV_SimplePokedex";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Pokedex Editor";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            ClientSize = new System.Drawing.Size(384, 401);
+            Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            Icon = Properties.Resources.Icon;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "SAV_SimplePokedex";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Pokedex Editor";
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -171,9 +210,10 @@
         private System.Windows.Forms.Button B_CaughtAll;
         private System.Windows.Forms.Button B_SeenNone;
         private System.Windows.Forms.Button B_SeenAll;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label Label_Caught;
         private System.Windows.Forms.CheckedListBox CLB_Caught;
         private System.Windows.Forms.Label Label_Seen;
         private System.Windows.Forms.CheckedListBox CLB_Seen;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }
